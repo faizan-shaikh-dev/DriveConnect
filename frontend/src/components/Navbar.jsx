@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { WHATSAPP_CONFIG } from "@/utils/whatsapp";
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -15,6 +16,11 @@ export default function Navbar() {
     { label: "About", href: "/about" },
     { label: "Contact", href: "/contact" },
   ];
+
+  const whatsAppLink = WHATSAPP_CONFIG.createWhatsAppLink(
+    WHATSAPP_CONFIG.dispatchNumber,
+    "Hello DriveConnect! I want to book a driver for my car. Please connect me with an available driver."
+  );
 
   return (
     <header className="w-full border-b border-gray-200/80 bg-white/95 backdrop-blur-md sticky top-0 z-50 transition-all">
@@ -50,6 +56,15 @@ export default function Navbar() {
 
         {/* Right Action Buttons */}
         <div className="hidden md:flex items-center gap-3">
+          <a
+            href={whatsAppLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 text-xs px-3.5 py-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 rounded-full font-semibold transition"
+          >
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            WhatsApp
+          </a>
           <Link
             href="/login"
             className="text-sm px-4 py-2 text-gray-700 hover:text-black hover:bg-gray-100 rounded-full transition font-medium"
@@ -103,6 +118,14 @@ export default function Navbar() {
             })}
           </div>
           <div className="pt-3 border-t border-gray-100 flex flex-col gap-2">
+            <a
+              href={whatsAppLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full text-center py-2.5 text-sm font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 rounded-xl transition flex items-center justify-center gap-2"
+            >
+              💬 Connect on WhatsApp
+            </a>
             <Link
               href="/login"
               onClick={() => setMobileMenuOpen(false)}

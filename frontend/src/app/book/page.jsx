@@ -2,11 +2,15 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { WHATSAPP_CONFIG } from "@/utils/whatsapp";
 
 export default function BookPage() {
   const [step, setStep] = useState(1);
   const [serviceType, setServiceType] = useState("hourly");
+  const [copied, setCopied] = useState(false);
   const [formData, setFormData] = useState({
+    clientName: "",
+    clientPhone: "",
     pickup: "",
     destination: "",
     date: "",
@@ -23,30 +27,33 @@ export default function BookPage() {
     {
       id: "auto-assign",
       name: "Fastest Match (Auto-assign)",
+      phone: WHATSAPP_CONFIG.dispatchNumber,
       rating: "4.9+",
       experience: "Top 10% Drivers",
       priceDiff: "$0",
-      desc: "System assigns the nearest available 5-star driver immediately.",
+      desc: "Our 24/7 WhatsApp dispatch assigns the closest 5-star driver immediately.",
     },
     {
       id: "marcus",
       name: "Marcus Vance",
+      phone: "919876543211",
       rating: "4.96",
       trips: 940,
       experience: "6 yrs exp",
       priceDiff: "+$5/hr",
       specialty: "Luxury Sedans & SUVs",
-      desc: "Former executive chauffeur. Punctual, courteous, English & Spanish.",
+      desc: "Former executive chauffeur. Direct WhatsApp coordination, polite & punctual.",
     },
     {
       id: "david",
       name: "David Chen",
+      phone: "919876543212",
       rating: "4.92",
       trips: 720,
       experience: "5 yrs exp",
       priceDiff: "+$3/hr",
       specialty: "Manual & Highway Specialist",
-      desc: "Expert mountain and long-distance highway driver.",
+      desc: "Expert highway driver. Shares live GPS location on WhatsApp throughout the journey.",
     },
   ];
 
@@ -71,6 +78,33 @@ export default function BookPage() {
 
   const totals = calculateTotal();
 
+  const currentDriverObj = mockDrivers.find((d) => d.id === formData.selectedDriver) || mockDrivers[0];
+
+  const generatedWhatsAppMessage = WHATSAPP_CONFIG.generateBookingMessage({
+    serviceType,
+    pickup: formData.pickup || "Downtown",
+    destination: formData.destination,
+    hours: formData.hours,
+    date: formData.date || "Today",
+    time: formData.time || "Immediate",
+    carModel: formData.carModel || "My vehicle",
+    transmission: formData.transmission,
+    selectedDriver: currentDriverObj.name,
+    clientName: formData.clientName || "Customer",
+    notes: formData.driverNotes,
+  });
+
+  const whatsAppLink = WHATSAPP_CONFIG.createWhatsAppLink(
+    currentDriverObj.phone || WHATSAPP_CONFIG.dispatchNumber,
+    generatedWhatsAppMessage
+  );
+
+  const handleCopyMessage = () => {
+    navigator.clipboard.writeText(generatedWhatsAppMessage);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2500);
+  };
+
   const handleNext = (e) => {
     e.preventDefault();
     if (step < 3) setStep(step + 1);
@@ -85,9 +119,13 @@ export default function BookPage() {
           <Link href="/" className="text-xs font-semibold text-gray-500 hover:text-black uppercase tracking-wider">
             ← Back to Home
           </Link>
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-full text-xs font-bold mt-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            Direct WhatsApp Driver & Client Connection
+          </div>
           <h1 className="text-3xl font-extrabold text-black mt-2">Book a Personal Driver</h1>
           <p className="text-sm text-gray-500 mt-1">
-            Hire a certified chauffeur to drive your car anywhere you need.
+            Hire a verified chauffeur for your vehicle with instant WhatsApp coordination.
           </p>
         </div>
 
@@ -97,14 +135,14 @@ export default function BookPage() {
             <div className="flex items-center justify-between relative">
               <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-gray-200 -translate-y-1/2 z-0" />
               <div
-                className="absolute top-1/2 left-0 h-0.5 bg-black -translate-y-1/2 z-0 transition-all duration-300"
+                className="absolute top-1/2 left-0 h-0.5 bg-emerald-600 -translate-y-1/2 z-0 transition-all duration-300"
                 style={{ width: `${((step - 1) / 2) * 100}%` }}
               />
 
               {[
                 { s: 1, label: "Trip Details" },
                 { s: 2, label: "Choose Driver" },
-                { s: 3, label: "Review & Pay" },
+                { s: 3, label: "WhatsApp & Pay" },
               ].map((item) => (
                 <div key={item.s} className="relative z-10 flex flex-col items-center">
                   <div
@@ -125,49 +163,82 @@ export default function BookPage() {
           </div>
         )}
 
-        {/* CONFIRMATION SCREEN */}
+        {/* CONFIRMATION SCREEN (WHATSAPP CENTRIC) */}
         {confirmed ? (
           <div className="bg-white rounded-3xl border border-gray-200 p-8 md:p-12 text-center shadow-lg animate-scale-in max-w-2xl mx-auto">
-            <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold">
-              ✓
+            <div className="w-16 h-16 bg-emerald-100 text-[#25D366] rounded-full flex items-center justify-center mx-auto mb-5 text-3xl font-bold">
+              💬
             </div>
-            <span className="text-xs font-semibold uppercase tracking-widest text-emerald-600">Booking Confirmed!</span>
-            <h2 className="text-2xl md:text-3xl font-extrabold text-black mt-2">Your Driver is Scheduled</h2>
+            <span className="text-xs font-bold uppercase tracking-widest text-emerald-600">Booking Ready</span>
+            <h2 className="text-2xl md:text-3xl font-extrabold text-black mt-1">Connect with Driver on WhatsApp</h2>
             <p className="text-sm text-gray-600 mt-2 max-w-md mx-auto">
-              Booking ID <span className="font-mono font-bold text-black">#DC-98421</span>. We’ve sent full details & live GPS tracker to your mobile.
+              Your ride details have been packaged. Click below to start WhatsApp chat directly with <span className="font-bold text-black">{currentDriverObj.name}</span>!
             </p>
 
-            <div className="my-8 p-6 bg-gray-50 rounded-2xl text-left border border-gray-100 space-y-3 text-sm">
+            {/* Direct WhatsApp Call to Action */}
+            <div className="my-6 p-6 bg-emerald-50/80 rounded-2xl border border-emerald-200 text-left">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <span className="w-3 h-3 rounded-full bg-[#25D366] animate-ping"></span>
+                  <span className="text-xs font-bold uppercase text-emerald-900 tracking-wider">
+                    WhatsApp Chat Ready
+                  </span>
+                </div>
+                <span className="text-xs font-mono text-gray-500">Booking #DC-98421</span>
+              </div>
+              <p className="text-xs text-gray-700 leading-relaxed">
+                When you click the button, WhatsApp will open with your pickup address, vehicle details, and scheduled time pre-filled. You can share your live GPS location directly in chat!
+              </p>
+              
+              <div className="mt-4 flex flex-col sm:flex-row gap-2.5">
+                <a
+                  href={whatsAppLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 py-3.5 bg-[#25D366] hover:bg-[#1EBE5D] text-white rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition shadow-md active:scale-95"
+                >
+                  <WhatsAppIcon className="w-5 h-5 fill-current" />
+                  Open WhatsApp Chat Now
+                </a>
+                <button
+                  onClick={handleCopyMessage}
+                  className="px-4 py-3 bg-white border border-emerald-300 text-emerald-900 hover:bg-emerald-100 rounded-xl text-xs font-semibold transition"
+                >
+                  {copied ? "Copied! ✓" : "Copy Message"}
+                </button>
+              </div>
+            </div>
+
+            {/* Trip Details Card */}
+            <div className="p-5 bg-gray-50 rounded-2xl text-left border border-gray-100 space-y-2.5 text-xs text-gray-700">
+              <div className="flex justify-between">
+                <span className="text-gray-500">Assigned Driver:</span>
+                <span className="font-semibold text-black">{currentDriverObj.name} (★ {currentDriverObj.rating})</span>
+              </div>
               <div className="flex justify-between">
                 <span className="text-gray-500">Service:</span>
                 <span className="font-semibold text-black capitalize">{serviceType} Driver</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500">Pickup Address:</span>
-                <span className="font-semibold text-black">{formData.pickup || "742 Evergreen Terrace"}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Scheduled For:</span>
-                <span className="font-semibold text-black">
-                  {formData.date || "Today"} at {formData.time || "Immediate"}
-                </span>
+                <span className="font-semibold text-black">{formData.pickup || "Main Street"}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500">Vehicle:</span>
                 <span className="font-semibold text-black">
-                  {formData.carModel || "Standard Sedan"} ({formData.transmission})
+                  {formData.carModel || "Personal Car"} ({formData.transmission})
                 </span>
               </div>
-              <div className="flex justify-between border-t border-gray-200 pt-3 text-base">
-                <span className="font-bold text-black">Total Fare:</span>
+              <div className="flex justify-between border-t border-gray-200 pt-2 text-sm">
+                <span className="font-bold text-black">Estimated Fare:</span>
                 <span className="font-extrabold text-black">${totals.total}.00</span>
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
               <Link
                 href="/"
-                className="px-6 py-3 bg-black hover:bg-gray-800 text-white rounded-xl text-sm font-medium transition"
+                className="px-6 py-2.5 bg-black hover:bg-gray-800 text-white rounded-xl text-xs font-medium transition"
               >
                 Return to Home
               </Link>
@@ -176,15 +247,15 @@ export default function BookPage() {
                   setConfirmed(false);
                   setStep(1);
                 }}
-                className="px-6 py-3 border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-xl text-sm font-medium transition"
+                className="px-6 py-2.5 border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-xl text-xs font-medium transition"
               >
-                Book Another Driver
+                Book Another Trip
               </button>
             </div>
           </div>
         ) : (
           <div className="bg-white rounded-3xl border border-gray-200 shadow-sm p-6 md:p-10 animate-fade-in">
-            {/* STEP 1: TRIP DETAILS */}
+            {/* STEP 1: TRIP & CLIENT DETAILS */}
             {step === 1 && (
               <form onSubmit={handleNext} className="space-y-6">
                 <div>
@@ -216,6 +287,41 @@ export default function BookPage() {
                   </div>
                 </div>
 
+                {/* Client Contact Info */}
+                <div className="p-4 bg-emerald-50/60 rounded-2xl border border-emerald-200/80">
+                  <h4 className="text-xs font-bold text-emerald-950 uppercase tracking-wider mb-3">
+                    Client WhatsApp Contact Details
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-700 mb-1">
+                        Your Name *
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={formData.clientName}
+                        onChange={(e) => setFormData({ ...formData, clientName: e.target.value })}
+                        placeholder="e.g. Faizan Shaikh"
+                        className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-700 mb-1">
+                        WhatsApp Mobile Number *
+                      </label>
+                      <input
+                        type="tel"
+                        required
+                        value={formData.clientPhone}
+                        onChange={(e) => setFormData({ ...formData, clientPhone: e.target.value })}
+                        placeholder="+91 98765 43210"
+                        className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black"
+                      />
+                    </div>
+                  </div>
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div>
                     <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">
@@ -226,7 +332,7 @@ export default function BookPage() {
                       required
                       value={formData.pickup}
                       onChange={(e) => setFormData({ ...formData, pickup: e.target.value })}
-                      placeholder="e.g. 104 Main St, Downtown"
+                      placeholder="e.g. 104 Main St, Bandra, Mumbai"
                       className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black focus:bg-white transition"
                     />
                   </div>
@@ -253,7 +359,7 @@ export default function BookPage() {
                         type="text"
                         value={formData.destination}
                         onChange={(e) => setFormData({ ...formData, destination: e.target.value })}
-                        placeholder="e.g. Lake Tahoe / Coastal Bay"
+                        placeholder="e.g. Pune / Lonavala / Outstation"
                         className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black focus:bg-white transition"
                       />
                     )}
@@ -298,7 +404,7 @@ export default function BookPage() {
                         type="text"
                         value={formData.carModel}
                         onChange={(e) => setFormData({ ...formData, carModel: e.target.value })}
-                        placeholder="e.g. Honda Accord, BMW X5, Tesla Model 3"
+                        placeholder="e.g. Hyundai Creta, Honda City, Fortuner"
                         className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black focus:bg-white transition"
                       />
                     </div>
@@ -336,7 +442,7 @@ export default function BookPage() {
                 <div>
                   <h3 className="text-lg font-bold text-black">Available Drivers in Your Area</h3>
                   <p className="text-xs text-gray-500 mt-1">
-                    Select an auto-assigned verified driver or reserve an executive specialist.
+                    Select an auto-assigned verified driver or connect directly with an executive specialist on WhatsApp.
                   </p>
                 </div>
 
@@ -347,7 +453,7 @@ export default function BookPage() {
                       onClick={() => setFormData({ ...formData, selectedDriver: driver.id })}
                       className={`p-5 rounded-2xl border cursor-pointer transition ${
                         formData.selectedDriver === driver.id
-                          ? "border-black bg-gray-50/90 ring-2 ring-black"
+                          ? "border-emerald-600 bg-emerald-50/40 ring-2 ring-emerald-600"
                           : "border-gray-200 hover:border-gray-300 bg-white"
                       }`}
                     >
@@ -361,6 +467,9 @@ export default function BookPage() {
                               <h4 className="font-bold text-sm text-black">{driver.name}</h4>
                               <span className="text-xs font-semibold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">
                                 ★ {driver.rating}
+                              </span>
+                              <span className="text-[11px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+                                WhatsApp Ready
                               </span>
                             </div>
                             <p className="text-xs text-gray-500 mt-0.5">{driver.experience} • {driver.specialty || "All vehicles"}</p>
@@ -401,85 +510,91 @@ export default function BookPage() {
                     onClick={() => setStep(3)}
                     className="px-8 py-3.5 bg-black hover:bg-gray-800 text-white rounded-xl text-sm font-semibold transition active:scale-95 shadow-sm"
                   >
-                    Review Fare Estimate →
+                    Review & Connect on WhatsApp →
                   </button>
                 </div>
               </div>
             )}
 
-            {/* STEP 3: REVIEW & PAY */}
+            {/* STEP 3: REVIEW & WHATSAPP CONNECTION */}
             {step === 3 && (
               <div className="space-y-6">
                 <div>
-                  <h3 className="text-lg font-bold text-black">Booking Summary & Price Breakdown</h3>
-                  <p className="text-xs text-gray-500 mt-1">Review your trip details before confirming.</p>
+                  <h3 className="text-lg font-bold text-black">Review & WhatsApp Connection</h3>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Connect directly with your driver on WhatsApp for live GPS tracking and timing updates.
+                  </p>
                 </div>
 
-                <div className="p-6 bg-gray-50 rounded-2xl border border-gray-200 space-y-3 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Service:</span>
-                    <span className="font-semibold text-black capitalize">{serviceType} Service</span>
+                {/* WhatsApp Chat Preview Card */}
+                <div className="p-5 bg-emerald-50/70 border border-emerald-300 rounded-2xl">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-bold text-emerald-950 uppercase tracking-wider flex items-center gap-1.5">
+                      <WhatsAppIcon className="w-4 h-4 fill-emerald-600" />
+                      Pre-filled WhatsApp Message Preview
+                    </span>
+                    <button
+                      onClick={handleCopyMessage}
+                      className="text-[11px] font-semibold text-emerald-800 hover:underline"
+                    >
+                      {copied ? "Copied! ✓" : "Copy text"}
+                    </button>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Pickup Location:</span>
-                    <span className="font-semibold text-black">{formData.pickup || "Downtown pickup"}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Scheduled Date & Time:</span>
-                    <span className="font-semibold text-black">{formData.date || "Today"} @ {formData.time || "Asap"}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Assigned Driver:</span>
-                    <span className="font-semibold text-black capitalize">{formData.selectedDriver}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Vehicle Type:</span>
-                    <span className="font-semibold text-black capitalize">{formData.transmission}</span>
-                  </div>
-
-                  <div className="border-t border-gray-200 pt-3 space-y-2">
-                    <div className="flex justify-between text-gray-600 text-xs">
-                      <span>Base Driver Rate:</span>
-                      <span>${totals.base}.00</span>
-                    </div>
-                    {totals.driverExtra > 0 && (
-                      <div className="flex justify-between text-gray-600 text-xs">
-                        <span>Executive Driver Premium:</span>
-                        <span>${totals.driverExtra}.00</span>
-                      </div>
-                    )}
-                    <div className="flex justify-between text-gray-600 text-xs">
-                      <span>Safety, Insurance & Service Fee:</span>
-                      <span>${totals.safetyFee}.00</span>
-                    </div>
-                    <div className="flex justify-between border-t border-gray-200 pt-2 text-base font-bold text-black">
-                      <span>Total Estimated Fare:</span>
-                      <span className="text-xl">${totals.total}.00</span>
-                    </div>
-                  </div>
+                  <pre className="bg-white p-3.5 rounded-xl border border-emerald-100 text-[11px] font-mono text-gray-800 whitespace-pre-wrap leading-relaxed">
+                    {generatedWhatsAppMessage}
+                  </pre>
+                  <p className="text-[11px] text-emerald-800 mt-2">
+                    💡 Clicking the green button below will open WhatsApp on your phone or computer with this message ready to send!
+                  </p>
                 </div>
 
-                <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800 flex items-center gap-3">
-                  <span className="text-lg">🛡️</span>
-                  <div>
-                    <span className="font-bold">DriveConnect Guarantee:</span> Free cancellation up to 60 minutes before scheduled pickup. No hidden extra fuel fees.
+                {/* Price Breakdown */}
+                <div className="p-5 bg-gray-50 rounded-2xl border border-gray-200 space-y-2.5 text-xs text-gray-600">
+                  <div className="flex justify-between">
+                    <span>Base Driver Fee:</span>
+                    <span>${totals.base}.00</span>
+                  </div>
+                  {totals.driverExtra > 0 && (
+                    <div className="flex justify-between">
+                      <span>Executive Chauffeur Fee:</span>
+                      <span>${totals.driverExtra}.00</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between">
+                    <span>Safety, Insurance & Support:</span>
+                    <span>${totals.safetyFee}.00</span>
+                  </div>
+                  <div className="flex justify-between border-t border-gray-200 pt-2 text-sm font-bold text-black">
+                    <span>Total Estimated Fare:</span>
+                    <span className="text-xl font-black">${totals.total}.00</span>
                   </div>
                 </div>
 
-                <div className="flex justify-between pt-4">
+                {/* Action Buttons */}
+                <div className="flex flex-col sm:flex-row gap-3 pt-4">
                   <button
                     type="button"
                     onClick={() => setStep(2)}
-                    className="px-6 py-3 border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-xl text-sm font-medium transition"
+                    className="w-full sm:w-auto px-6 py-3.5 border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-xl text-sm font-medium transition"
                   >
                     ← Back
                   </button>
+                  <a
+                    href={whatsAppLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setConfirmed(true)}
+                    className="flex-1 py-3.5 bg-[#25D366] hover:bg-[#1EBE5D] text-white rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition shadow-md active:scale-95"
+                  >
+                    <WhatsAppIcon className="w-5 h-5 fill-current" />
+                    Book & Connect via WhatsApp (${totals.total}.00)
+                  </a>
                   <button
                     type="button"
                     onClick={() => setConfirmed(true)}
-                    className="px-8 py-3.5 bg-black hover:bg-gray-800 text-white rounded-xl text-sm font-semibold transition active:scale-95 shadow-md"
+                    className="w-full sm:w-auto px-6 py-3.5 bg-black hover:bg-gray-800 text-white rounded-xl text-sm font-semibold transition"
                   >
-                    Confirm & Reserve Driver ($ {totals.total}.00)
+                    Confirm on Web
                   </button>
                 </div>
               </div>
@@ -488,5 +603,13 @@ export default function BookPage() {
         )}
       </div>
     </div>
+  );
+}
+
+function WhatsAppIcon({ className = "w-4 h-4" }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z" />
+    </svg>
   );
 }
