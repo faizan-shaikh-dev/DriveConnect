@@ -2,314 +2,279 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useLanguage } from "@/context/LanguageContext";
+import { useApp } from "@/context/AppContext";
 
 export default function SignupPage() {
-  const [step, setStep] = useState(1);
-  const [submitted, setSubmitted] = useState(false);
+  const { t } = useLanguage();
+  const { registerNewDriver } = useApp();
+
   const [formData, setFormData] = useState({
     name: "",
+    city: "Mumbai",
     phone: "",
-    email: "",
-    city: "New York / Metro",
-    licenseNumber: "",
-    yearsExperience: "5",
-    transmissions: ["Automatic"],
-    cleanRecord: false,
+    experience: "5 years",
+    transmission: "Automatic & Manual",
+    car: "Sedan / Hatchback",
+    license: "",
+    rate: "400",
   });
 
-  const toggleTransmission = (t) => {
-    if (formData.transmissions.includes(t)) {
-      setFormData({
-        ...formData,
-        transmissions: formData.transmissions.filter((x) => x !== t),
-      });
-    } else {
-      setFormData({
-        ...formData,
-        transmissions: [...formData.transmissions, t],
-      });
-    }
-  };
+  const [submitted, setSubmitted] = useState(false);
+  const [applicantInfo, setApplicantInfo] = useState(null);
 
-  const handleNext = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (step < 3) setStep(step + 1);
-    else setSubmitted(true);
+
+    const application = {
+      name: formData.name,
+      city: formData.city,
+      phone: formData.phone,
+      experience: formData.experience,
+      transmission: formData.transmission,
+      car: formData.car,
+      license: formData.license,
+      rate: Number(formData.rate) || 400,
+    };
+
+    const newApp = registerNewDriver(application);
+    setApplicantInfo(newApp);
+    setSubmitted(true);
   };
 
   return (
-    <div className="min-h-screen bg-gray-50/50 py-12 px-6">
-      <div className="max-w-2xl mx-auto">
+    <div className="min-h-screen bg-white text-black py-12 px-4 sm:px-6 flex flex-col justify-center">
+      <div className="max-w-xl w-full mx-auto">
+        {/* Brand Header */}
         <div className="text-center mb-8">
-          <Link href="/" className="text-xs font-semibold text-gray-500 hover:text-black uppercase tracking-wider">
-            ← Back to Home
+          <Link href="/" className="inline-flex items-center gap-2 font-extrabold text-2xl tracking-tight">
+            <span className="w-9 h-9 bg-black text-white rounded-xl flex items-center justify-center text-base font-black">
+              D
+            </span>
+            DriveConnect
           </Link>
-          <h1 className="text-3xl font-extrabold text-black mt-2">Become a DriveConnect Partner</h1>
-          <p className="text-sm text-gray-500 mt-1">
-            Drive high-end personal vehicles. Earn up to $35/hr with zero fuel or car maintenance costs.
+          <h1 className="text-2xl sm:text-3xl font-black mt-4">
+            Driver Partner Registration
+          </h1>
+          <p className="text-xs sm:text-sm text-gray-500 mt-1">
+            Join the verified chauffeur network. Set your rates, take direct bookings.
           </p>
         </div>
 
-        {/* Stepper */}
-        {!submitted && (
-          <div className="flex items-center justify-between mb-8 px-4">
-            {[
-              { s: 1, label: "Personal" },
-              { s: 2, label: "License & Exp" },
-              { s: 3, label: "Skills & Vetting" },
-            ].map((item) => (
-              <div key={item.s} className="flex items-center gap-2">
-                <span
-                  className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
-                    step >= item.s ? "bg-black text-white" : "bg-gray-200 text-gray-500"
-                  }`}
-                >
-                  {item.s}
+        {submitted ? (
+          <div className="bg-white border border-gray-200 rounded-3xl p-8 shadow-sm text-center">
+            <div className="w-16 h-16 bg-black text-white rounded-full flex items-center justify-center mx-auto text-2xl font-black">
+              ✓
+            </div>
+
+            <h2 className="text-xl font-black mt-5">Application Submitted for Review!</h2>
+            <p className="text-xs text-gray-600 mt-2">
+              Application ID: <strong className="text-black">{applicantInfo?.id}</strong>
+            </p>
+
+            {/* Verification Flow Roadmap */}
+            <div className="mt-6 bg-gray-50 rounded-2xl p-5 text-left border border-gray-100 space-y-4 text-xs">
+              <div className="flex items-start gap-3">
+                <span className="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center font-bold text-[11px] shrink-0">
+                  1
                 </span>
-                <span className={`text-xs font-medium ${step >= item.s ? "text-black" : "text-gray-400"}`}>
-                  {item.label}
+                <div>
+                  <h4 className="font-bold text-black">KYC & License Verification</h4>
+                  <p className="text-gray-500 mt-0.5">
+                    Our operations team is reviewing your driving license ({formData.license || "Submitted"}).
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <span className="w-6 h-6 rounded-full bg-gray-200 text-black flex items-center justify-center font-bold text-[11px] shrink-0">
+                  2
+                </span>
+                <div>
+                  <h4 className="font-bold text-black">Admin Approval & ₹499 Platform Fee</h4>
+                  <p className="text-gray-500 mt-0.5">
+                    Once approved on the Admin Dashboard, the one-time ₹499 INR platform fee activates your live directory listing.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <span className="w-6 h-6 rounded-full bg-gray-200 text-black flex items-center justify-center font-bold text-[11px] shrink-0">
+                  3
+                </span>
+                <div>
+                  <h4 className="font-bold text-black">WhatsApp Client Connection</h4>
+                  <p className="text-gray-500 mt-0.5">
+                    Clients will book trips directly through your verified profile, connecting to your WhatsApp without middlemen.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6 flex flex-col sm:flex-row gap-3">
+              <Link
+                href="/admin"
+                className="flex-1 py-3 px-4 bg-black text-white rounded-xl text-xs font-bold hover:bg-gray-800 transition"
+              >
+                Go to Admin Portal to Approve
+              </Link>
+              <Link
+                href="/login"
+                className="flex-1 py-3 px-4 bg-gray-100 hover:bg-gray-200 text-black rounded-xl text-xs font-bold transition"
+              >
+                Go to Login
+              </Link>
+            </div>
+          </div>
+        ) : (
+          <div className="bg-white rounded-3xl border border-gray-200 p-6 sm:p-8 shadow-sm">
+            {/* Platform Fee Notice Callout */}
+            <div className="mb-6 p-4 rounded-2xl bg-gray-50 border border-gray-200 flex items-start gap-3">
+              <span className="w-7 h-7 rounded-xl bg-black text-white flex items-center justify-center font-black text-xs shrink-0">
+                ₹
+              </span>
+              <div className="text-xs">
+                <span className="font-bold text-black block">Platform Fee Notice</span>
+                <span className="text-gray-500 leading-relaxed block mt-0.5">
+                  ₹499 INR one-time onboarding fee applies after admin verifies your documents. Zero commission on your daily earnings!
                 </span>
               </div>
-            ))}
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Full Name & Phone */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">
+                    Full Name *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Rajesh Kumar"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-black transition"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">
+                    WhatsApp Phone Number *
+                  </label>
+                  <input
+                    type="tel"
+                    required
+                    placeholder="9876543210"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-black transition"
+                  />
+                </div>
+              </div>
+
+              {/* City & License */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">
+                    Operating City *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Mumbai, Pune, Delhi"
+                    value={formData.city}
+                    onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-black transition"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">
+                    Driving License Number *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. MH-0220200084"
+                    value={formData.license}
+                    onChange={(e) => setFormData({ ...formData, license: e.target.value })}
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-black transition"
+                  />
+                </div>
+              </div>
+
+              {/* Experience & Transmission */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">
+                    Driving Experience
+                  </label>
+                  <select
+                    value={formData.experience}
+                    onChange={(e) => setFormData({ ...formData, experience: e.target.value })}
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-black transition"
+                  >
+                    <option value="3 years">3+ years</option>
+                    <option value="5 years">5+ years</option>
+                    <option value="7 years">7+ years</option>
+                    <option value="10+ years">10+ years</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">
+                    Transmission Expertise
+                  </label>
+                  <select
+                    value={formData.transmission}
+                    onChange={(e) => setFormData({ ...formData, transmission: e.target.value })}
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-black transition"
+                  >
+                    <option value="Automatic & Manual">Automatic & Manual</option>
+                    <option value="Automatic & EV">Automatic & EV</option>
+                    <option value="Manual Only">Manual Only</option>
+                    <option value="SUV & Luxury Chauffeur">SUV & Luxury Chauffeur</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Rate */}
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">
+                  Desired Hourly Rate (INR ₹)
+                </label>
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-bold">
+                    ₹
+                  </span>
+                  <input
+                    type="number"
+                    min="250"
+                    max="1500"
+                    value={formData.rate}
+                    onChange={(e) => setFormData({ ...formData, rate: e.target.value })}
+                    className="w-full pl-8 pr-4 py-3 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-black transition"
+                  />
+                </div>
+                <p className="text-[11px] text-gray-400 mt-1">Recommended: ₹350 - ₹500/hr</p>
+              </div>
+
+              {/* Submit CTA */}
+              <button
+                type="submit"
+                className="w-full py-3.5 px-4 bg-black text-white rounded-xl text-sm font-bold hover:bg-gray-800 transition shadow-sm mt-3"
+              >
+                Submit Application for KYC Review
+              </button>
+            </form>
           </div>
         )}
 
-        <div className="bg-white rounded-3xl border border-gray-200 p-8 shadow-sm">
-          {submitted ? (
-            <div className="text-center py-8 animate-scale-in">
-              <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
-                ✓
-              </div>
-              <span className="text-xs font-bold uppercase tracking-widest text-emerald-600">Application Submitted</span>
-              <h2 className="text-2xl font-extrabold text-black mt-1">Welcome, {formData.name}!</h2>
-              <p className="text-sm text-gray-500 mt-2 max-w-md mx-auto leading-relaxed">
-                Your application ID is <span className="font-mono font-bold text-black">#APP-7821</span>. Our onboarding coordinator will review your driving license and contact you within 24 hours to schedule your practical road evaluation.
-              </p>
-
-              <div className="mt-8 p-6 bg-gray-50 rounded-2xl text-left border border-gray-100 text-xs text-gray-600 space-y-2 max-w-md mx-auto">
-                <div className="font-bold text-black text-sm mb-2">Next Steps for Onboarding:</div>
-                <div>1. DMV & Background screening check (In Progress)</div>
-                <div>2. Quick 20-minute vehicle handling assessment</div>
-                <div>3. Uniform & Driver ID collection</div>
-                <div>4. Start receiving high-paying ride requests!</div>
-              </div>
-
-              <div className="mt-8 flex justify-center gap-3">
-                <Link
-                  href="/driver"
-                  className="px-6 py-3 bg-black hover:bg-gray-800 text-white rounded-xl text-xs font-semibold transition"
-                >
-                  Preview Driver Portal
-                </Link>
-                <Link
-                  href="/"
-                  className="px-6 py-3 border border-gray-200 text-gray-700 rounded-xl text-xs font-semibold hover:bg-gray-50 transition"
-                >
-                  Return to Home
-                </Link>
-              </div>
-            </div>
-          ) : (
-            <form onSubmit={handleNext} className="space-y-6">
-              {/* STEP 1 */}
-              {step === 1 && (
-                <div className="space-y-4 animate-fade-in">
-                  <h3 className="font-bold text-base text-black">Step 1: Personal Details</h3>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">
-                      Full Legal Name *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      placeholder="e.g. Marcus Vance"
-                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">
-                        Mobile Phone Number *
-                      </label>
-                      <input
-                        type="tel"
-                        required
-                        value={formData.phone}
-                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                        placeholder="+1 (555) 000-0000"
-                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">
-                        Email Address *
-                      </label>
-                      <input
-                        type="email"
-                        required
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        placeholder="marcus@example.com"
-                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">
-                      Operating City
-                    </label>
-                    <select
-                      value={formData.city}
-                      onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black"
-                    >
-                      <option>New York / Metro</option>
-                      <option>Los Angeles / Orange County</option>
-                      <option>Chicago</option>
-                      <option>San Francisco / Bay Area</option>
-                      <option>Dallas / Fort Worth</option>
-                      <option>Miami / South Florida</option>
-                    </select>
-                  </div>
-
-                  <div className="pt-4 flex justify-end">
-                    <button
-                      type="submit"
-                      className="px-6 py-3 bg-black hover:bg-gray-800 text-white rounded-xl text-xs font-bold transition"
-                    >
-                      Continue →
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* STEP 2 */}
-              {step === 2 && (
-                <div className="space-y-4 animate-fade-in">
-                  <h3 className="font-bold text-base text-black">Step 2: Driving Credentials</h3>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">
-                      Driver's License Number *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.licenseNumber}
-                      onChange={(e) => setFormData({ ...formData, licenseNumber: e.target.value })}
-                      placeholder="e.g. D12345678"
-                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">
-                      Years of Driving Experience
-                    </label>
-                    <select
-                      value={formData.yearsExperience}
-                      onChange={(e) => setFormData({ ...formData, yearsExperience: e.target.value })}
-                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black"
-                    >
-                      <option value="3">3 - 4 Years</option>
-                      <option value="5">5 - 7 Years (Recommended)</option>
-                      <option value="8">8 - 10 Years</option>
-                      <option value="10">10+ Years (Master Chauffeur)</option>
-                    </select>
-                  </div>
-
-                  <div className="p-4 bg-gray-50 rounded-xl border border-gray-200 flex items-start gap-3">
-                    <input
-                      type="checkbox"
-                      id="clean"
-                      required
-                      checked={formData.cleanRecord}
-                      onChange={(e) => setFormData({ ...formData, cleanRecord: e.target.checked })}
-                      className="mt-0.5 accent-black rounded"
-                    />
-                    <label htmlFor="clean" className="text-xs text-gray-600 leading-normal cursor-pointer">
-                      I certify that I hold a valid, non-suspended driver's license and have had zero DUI/DWI convictions or major moving violations in the past 3 years.
-                    </label>
-                  </div>
-
-                  <div className="pt-4 flex justify-between">
-                    <button
-                      type="button"
-                      onClick={() => setStep(1)}
-                      className="px-6 py-3 border border-gray-200 text-gray-700 rounded-xl text-xs font-semibold hover:bg-gray-50 transition"
-                    >
-                      ← Back
-                    </button>
-                    <button
-                      type="submit"
-                      className="px-6 py-3 bg-black hover:bg-gray-800 text-white rounded-xl text-xs font-bold transition"
-                    >
-                      Continue →
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* STEP 3 */}
-              {step === 3 && (
-                <div className="space-y-4 animate-fade-in">
-                  <h3 className="font-bold text-base text-black">Step 3: Vehicle Capabilities</h3>
-                  <p className="text-xs text-gray-500">
-                    Select all vehicle transmission types you are certified and comfortable driving:
-                  </p>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    {[
-                      "Automatic Transmission",
-                      "Manual Transmission (Stick shift)",
-                      "Luxury Sedans (Mercedes / BMW)",
-                      "Full-size SUVs & 4x4",
-                      "Electric Vehicles (Tesla, EV)",
-                      "Commercial Vans"
-                    ].map((item) => (
-                      <div
-                        key={item}
-                        onClick={() => toggleTransmission(item)}
-                        className={`p-3.5 rounded-xl border text-xs font-semibold cursor-pointer transition ${
-                          formData.transmissions.includes(item)
-                            ? "border-black bg-black text-white"
-                            : "border-gray-200 bg-gray-50 text-gray-700 hover:border-gray-300"
-                        }`}
-                      >
-                        {item}
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="p-4 bg-emerald-50 rounded-xl border border-emerald-200 text-xs text-emerald-800">
-                    🛡️ <strong>Background Check Consent:</strong> By submitting, you authorize DriveConnect to conduct standard DMV and criminal record verifications.
-                  </div>
-
-                  <div className="pt-4 flex justify-between">
-                    <button
-                      type="button"
-                      onClick={() => setStep(2)}
-                      className="px-6 py-3 border border-gray-200 text-gray-700 rounded-xl text-xs font-semibold hover:bg-gray-50 transition"
-                    >
-                      ← Back
-                    </button>
-                    <button
-                      type="submit"
-                      className="px-8 py-3 bg-black hover:bg-gray-800 text-white rounded-xl text-xs font-bold transition shadow-sm active:scale-95"
-                    >
-                      Submit Application
-                    </button>
-                  </div>
-                </div>
-              )}
-            </form>
-          )}
-        </div>
+        <p className="text-center text-xs text-gray-500 mt-6">
+          Already registered?{" "}
+          <Link href="/login" className="font-bold text-black hover:underline">
+            Log in to your Driver Portal
+          </Link>
+        </p>
       </div>
     </div>
   );

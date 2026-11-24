@@ -2,386 +2,435 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { WHATSAPP_CONFIG } from "@/utils/whatsapp";
+import { useLanguage } from "@/context/LanguageContext";
+import { useApp } from "@/context/AppContext";
 
 export default function DriversPage() {
-  const [filter, setFilter] = useState("all");
+  const { t } = useLanguage();
+  const { sortedDrivers, submitDriverReview } = useApp();
+
   const [search, setSearch] = useState("");
-  const [selectedDriver, setSelectedDriver] = useState(null);
+  const [filter, setFilter] = useState("all"); // "all" | "available" | "auto" | "manual"
+  const [selectedDriverForReview, setSelectedDriverForReview] = useState(null);
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewComment, setReviewComment] = useState("");
+  const [reviewerName, setReviewerName] = useState("");
+  const [reviewSubmitted, setReviewSubmitted] = useState(false);
 
-  const drivers = [
-    {
-      id: "marcus",
-      name: "Marcus Vance",
-      phone: "919876543211",
-      role: "Executive Chauffeur",
-      rating: 4.96,
-      trips: 940,
-      experience: "6 yrs",
-      rate: "$22/hr",
-      category: "luxury",
-      transmissions: ["Automatic", "Luxury EV", "Manual"],
-      languages: ["English", "Spanish"],
-      bio: "Former high-end corporate chauffeur with defensive driving certification. Specialized in Mercedes S-Class, BMW 7 Series, Tesla, and premium SUVs.",
-      reviews: [
-        { author: "Evelyn K.", text: "Marcus drove us for a wedding dinner downtown. Immensely courteous and smooth driving.", rating: 5 },
-        { author: "Robert T.", text: "Best driver in the city. Always 10 mins early.", rating: 5 }
-      ]
-    },
-    {
-      id: "david",
-      name: "David Chen",
-      phone: "919876543212",
-      role: "Highway & Outstation Specialist",
-      rating: 4.93,
-      trips: 780,
-      experience: "8 yrs",
-      rate: "$19/hr",
-      category: "highway",
-      transmissions: ["Manual", "Automatic", "4x4 SUV"],
-      languages: ["English", "Mandarin"],
-      bio: "Specializes in long-distance highway travel, mountain passes, and adverse weather conditions. Experienced with stick shifts and large family SUVs.",
-      reviews: [
-        { author: "Sarah M.", text: "Took my family on a 6-hour mountain trip safely while we slept in the back. Incredible peace of mind.", rating: 5 }
-      ]
-    },
-    {
-      id: "elena",
-      name: "Elena Rostova",
-      phone: "919876543213",
-      role: "City Commute & Event Chauffeur",
-      rating: 4.98,
-      trips: 1120,
-      experience: "5 yrs",
-      rate: "$20/hr",
-      category: "city",
-      transmissions: ["Automatic", "EV"],
-      languages: ["English"],
-      bio: "Knows every shortcut across the city. Polite, discrete, and comfortable handling tight downtown parking garages.",
-      reviews: [
-        { author: "Michael B.", text: "Elena is our go-to driver for Friday night dinners. Flawless service every single time.", rating: 5 }
-      ]
-    },
-    {
-      id: "samuel",
-      name: "Samuel O'Connor",
-      phone: "919876543214",
-      role: "Manual & Vintage Vehicle Pro",
-      rating: 4.91,
-      trips: 560,
-      experience: "10 yrs",
-      rate: "$21/hr",
-      category: "manual",
-      transmissions: ["Manual (Stick)", "Automatic"],
-      languages: ["English"],
-      bio: "Mechanic background with deep love for manual transmissions and classic cars. Treats every transmission and clutch with utmost gentleness.",
-      reviews: [
-        { author: "James H.", text: "I was nervous letting someone drive my manual Porsche, but Samuel treated it like his own.", rating: 5 }
-      ]
-    },
-    {
-      id: "priya",
-      name: "Priya Sharma",
-      phone: "919876543215",
-      role: "Family & Senior Care Driver",
-      rating: 4.99,
-      trips: 890,
-      experience: "7 yrs",
-      rate: "$18/hr",
-      category: "city",
-      transmissions: ["Automatic", "EV"],
-      languages: ["English", "Hindi"],
-      bio: "Warm, exceptionally patient, and safety-focused. Frequently booked by families for hospital visits, school runs, and senior citizen appointments.",
-      reviews: [
-        { author: "Anita P.", text: "Helped my elderly mother into the car with care and drove with total smoothness. Highly recommended.", rating: 5 }
-      ]
-    },
-    {
-      id: "alex",
-      name: "Alex Rivera",
-      phone: "919876543216",
-      role: "On-Demand City Driver",
-      rating: 4.89,
-      trips: 640,
-      experience: "4 yrs",
-      rate: "$18/hr",
-      category: "city",
-      transmissions: ["Automatic", "Manual"],
-      languages: ["English"],
-      bio: "Reliable and prompt city driver for daily office commutes, airport runs, and nightlife events.",
-      reviews: [
-        { author: "Derek S.", text: "On time, great driving, zero complaints.", rating: 5 }
-      ]
-    }
-  ];
-
-  const filtered = drivers.filter((d) => {
-    const matchesFilter = filter === "all" || d.category === filter;
+  // Filter logic
+  const driverList = sortedDrivers || [];
+  const filteredDrivers = driverList.filter((driver) => {
     const matchesSearch =
-      d.name.toLowerCase().includes(search.toLowerCase()) ||
-      d.role.toLowerCase().includes(search.toLowerCase()) ||
-      d.transmissions.some((t) => t.toLowerCase().includes(search.toLowerCase()));
-    return matchesFilter && matchesSearch;
+      driver.name.toLowerCase().includes(search.toLowerCase()) ||
+      driver.city.toLowerCase().includes(search.toLowerCase()) ||
+      driver.car.toLowerCase().includes(search.toLowerCase());
+
+    if (!matchesSearch) return false;
+
+    if (filter === "available") return driver.status === "available";
+    if (filter === "auto") return driver.transmission.toLowerCase().includes("auto");
+    if (filter === "manual") return driver.transmission.toLowerCase().includes("manual");
+
+    return true;
   });
 
-  return (
-    <div className="min-h-screen bg-gray-50/50 py-12 px-6">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="text-center max-w-2xl mx-auto mb-10">
-          <span className="text-xs font-bold tracking-widest uppercase text-emerald-600">
-            Direct WhatsApp Driver Connection
-          </span>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-black mt-2">Verified Professional Drivers</h1>
-          <p className="text-sm text-gray-500 mt-2">
-            Browse certified personal chauffeurs. Connect directly with any driver on WhatsApp to check availability, discuss vehicle specs, or coordinate pickup.
-          </p>
-        </div>
+  const handleOpenReview = (driver) => {
+    setSelectedDriverForReview(driver);
+    setReviewRating(5);
+    setReviewComment("");
+    setReviewerName("");
+    setReviewSubmitted(false);
+  };
 
-        {/* SEARCH & FILTERS */}
-        <div className="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm mb-10 flex flex-col md:flex-row gap-4 items-center justify-between">
-          {/* Search Box */}
-          <div className="w-full md:w-80 relative">
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search driver by name, EV, manual..."
-              className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black focus:bg-white transition"
-            />
-            <svg
-              className="w-4 h-4 text-gray-400 absolute left-3.5 top-3.5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
+  const handleSendReview = (e) => {
+    e.preventDefault();
+    if (!selectedDriverForReview || !reviewComment.trim()) return;
+
+    submitDriverReview(
+      selectedDriverForReview.id,
+      Number(reviewRating),
+      reviewComment.trim(),
+      reviewerName.trim() || "Verified Rider"
+    );
+
+    setReviewSubmitted(true);
+    setTimeout(() => {
+      setSelectedDriverForReview(null);
+      setReviewSubmitted(false);
+    }, 1500);
+  };
+
+  return (
+    <div className="min-h-screen bg-white text-black">
+      {/* Page Header (Screen 02) */}
+      <section className="border-b border-gray-200 py-12 md:py-16 px-4 sm:px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="max-w-2xl">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">
+              {t("findYourDriver")}
+            </h1>
+            <p className="mt-3 text-base sm:text-lg text-gray-600">
+              {t("findYourDriverSub")}
+            </p>
           </div>
 
-          {/* Filter Pills */}
-          <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-1 md:pb-0">
-            {[
-              { id: "all", label: "All Drivers" },
-              { id: "luxury", label: "Executive & Luxury" },
-              { id: "highway", label: "Highway / Outstation" },
-              { id: "city", label: "City & Commute" },
-              { id: "manual", label: "Manual Specialists" },
-            ].map((f) => (
+          {/* Search & Filter Toolbar */}
+          <div className="mt-8 flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between">
+            {/* Search Input */}
+            <div className="relative flex-1 max-w-lg">
+              <svg
+                className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder={t("searchPlaceholder")}
+                className="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-black transition"
+              />
+              {search && (
+                <button
+                  onClick={() => setSearch("")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 hover:text-black font-bold p-1"
+                >
+                  Clear
+                </button>
+              )}
+            </div>
+
+            {/* Filter Pills */}
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
               <button
-                key={f.id}
-                onClick={() => setFilter(f.id)}
-                className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition ${
-                  filter === f.id
-                    ? "bg-black text-white shadow-sm"
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                type="button"
+                onClick={() => setFilter("all")}
+                className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition whitespace-nowrap ${
+                  filter === "all"
+                    ? "bg-black text-white"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                 }`}
               >
-                {f.label}
+                {t("allDrivers")}
               </button>
-            ))}
+              <button
+                type="button"
+                onClick={() => setFilter("available")}
+                className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition whitespace-nowrap flex items-center gap-1.5 ${
+                  filter === "available"
+                    ? "bg-black text-white"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                }`}
+              >
+                <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                {t("available")}
+              </button>
+              <button
+                type="button"
+                onClick={() => setFilter("auto")}
+                className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition whitespace-nowrap ${
+                  filter === "auto"
+                    ? "bg-black text-white"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                }`}
+              >
+                {t("autoSpecialists")}
+              </button>
+              <button
+                type="button"
+                onClick={() => setFilter("manual")}
+                className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition whitespace-nowrap ${
+                  filter === "manual"
+                    ? "bg-black text-white"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                }`}
+              >
+                {t("manualSpecialists")}
+              </button>
+            </div>
           </div>
         </div>
+      </section>
 
-        {/* DRIVERS GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filtered.map((driver) => {
-            const driverWhatsAppUrl = WHATSAPP_CONFIG.createWhatsAppLink(
-              driver.phone,
-              WHATSAPP_CONFIG.generateDriverInquiryMessage(driver.name, driver.role)
-            );
-
-            return (
-              <div
-                key={driver.id}
-                className="bg-white rounded-3xl border border-gray-200 p-6 flex flex-col justify-between shadow-sm hover:shadow-md hover:-translate-y-1 transition duration-200 group"
+      {/* Drivers List */}
+      <section className="py-12 px-4 sm:px-6">
+        <div className="max-w-6xl mx-auto">
+          {filteredDrivers.length === 0 ? (
+            <div className="text-center py-16 border border-dashed border-gray-300 rounded-3xl p-8">
+              <p className="text-lg font-bold text-gray-800">No drivers match your search.</p>
+              <p className="text-sm text-gray-500 mt-1">Try another city or transmission type.</p>
+              <button
+                onClick={() => {
+                  setSearch("");
+                  setFilter("all");
+                }}
+                className="mt-4 px-5 py-2.5 bg-black text-white rounded-xl text-xs font-bold hover:bg-gray-800 transition"
               >
-                <div>
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-2xl bg-black text-white flex items-center justify-center font-bold text-base shadow-sm">
-                        {driver.name.charAt(0)}
+                Reset filters
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredDrivers.map((driver, index) => {
+                const isBusy = driver.status === "busy";
+                const isTopRank = index === 0 && !search && filter === "all";
+
+                return (
+                  <div
+                    key={driver.id}
+                    className="relative bg-white border border-gray-200 rounded-2xl p-6 flex flex-col justify-between hover:border-black transition-all hover:shadow-sm"
+                  >
+                    {/* Top Rank Badge */}
+                    {isTopRank && (
+                      <div className="absolute -top-3 left-6 bg-black text-white text-[10px] font-black tracking-wider uppercase px-3 py-1 rounded-full shadow-sm">
+                        ★ #1 Top Rated Chauffeur
                       </div>
-                      <div>
+                    )}
+
+                    <div>
+                      {/* Header info */}
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 rounded-xl bg-gray-100 border border-gray-200 flex items-center justify-center font-extrabold text-base text-black">
+                            {driver.name
+                              .split(" ")
+                              .map((n) => n[0])
+                              .join("")}
+                          </div>
+                          <div>
+                            <h3 className="font-extrabold text-lg text-black leading-tight">
+                              {driver.name}
+                            </h3>
+                            <p className="text-xs text-gray-500 mt-0.5">
+                              {driver.city} • {driver.car}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Status badge */}
+                        <div>
+                          {isBusy ? (
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-black text-white">
+                              <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse"></span>
+                              {t("onTrip")}
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-gray-100 text-gray-800 border border-gray-200">
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                              {t("available")}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Details row */}
+                      <div className="flex flex-wrap items-center gap-2 mt-4 text-xs">
+                        <span className="px-2.5 py-1 rounded-lg bg-gray-100 text-gray-700 font-medium">
+                          {driver.experience}
+                        </span>
+                        <span className="px-2.5 py-1 rounded-lg bg-gray-100 text-gray-700 font-medium">
+                          {driver.transmission}
+                        </span>
+                      </div>
+
+                      {/* Bio */}
+                      <p className="mt-3 text-xs text-gray-600 line-clamp-2 leading-relaxed">
+                        {driver.bio}
+                      </p>
+
+                      {/* Rating & Rate */}
+                      <div className="mt-5 pt-4 border-t border-gray-100 flex items-center justify-between">
                         <div className="flex items-center gap-1.5">
-                          <h3 className="font-bold text-base text-black group-hover:text-gray-700 transition">
-                            {driver.name}
-                          </h3>
-                          <span className="w-4 h-4 bg-emerald-500 text-white rounded-full flex items-center justify-center text-[10px]" title="Background Verified">
-                            ✓
+                          <span className="text-black font-extrabold text-sm">★ {driver.rating}</span>
+                          <span className="text-xs text-gray-400">
+                            ({driver.trips} {t("trips")})
                           </span>
                         </div>
-                        <p className="text-xs text-gray-500">{driver.role}</p>
+                        <div className="text-right">
+                          <span className="font-black text-lg text-black">
+                            ₹{driver.rate}
+                          </span>
+                          <span className="text-xs text-gray-500 font-medium">/hr</span>
+                        </div>
                       </div>
                     </div>
 
-                    <div className="text-right">
-                      <span className="font-extrabold text-base text-black">{driver.rate}</span>
+                    {/* Action buttons */}
+                    <div className="mt-6 pt-4 border-t border-gray-100 flex flex-col gap-2">
+                      <div className="flex items-center gap-2">
+                        {/* Book CTA */}
+                        <Link
+                          href={`/book?driver=${driver.id}`}
+                          className="flex-1 text-center py-2.5 px-4 bg-black text-white rounded-xl text-xs font-bold hover:bg-gray-800 transition shadow-sm"
+                        >
+                          {t("bookNow")}
+                        </Link>
+
+                        {/* WhatsApp connect button */}
+                        <a
+                          href={`https://wa.me/${driver.phone}?text=${encodeURIComponent(
+                            `Hello ${driver.name}, I found your profile on DriveConnect and want to book you for a trip in ${driver.city}. Are you available?`
+                          )}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-2.5 border border-gray-200 rounded-xl hover:bg-gray-50 transition text-gray-700 hover:text-black flex items-center justify-center"
+                          title={t("chatWhatsApp")}
+                        >
+                          <svg
+                            className="w-4 h-4 fill-current"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.861.174.086.275.072.376-.044.101-.116.433-.506.549-.68.116-.173.231-.145.39-.086s1.011.477 1.184.564.289.13.332.203c.043.072.043.419-.101.824z" />
+                          </svg>
+                        </a>
+                      </div>
+
+                      {/* Rate / View reviews toggle */}
+                      <button
+                        type="button"
+                        onClick={() => handleOpenReview(driver)}
+                        className="w-full text-center py-2 text-[11px] font-semibold text-gray-500 hover:text-black transition flex items-center justify-center gap-1"
+                      >
+                        <span>View Reviews & Rate Driver</span>
+                        <span className="text-[10px]">({driver.reviews?.length || 0})</span>
+                      </button>
                     </div>
                   </div>
-
-                  <div className="flex items-center gap-2 mt-4 text-xs text-gray-600 flex-wrap">
-                    <span className="inline-flex items-center gap-1 bg-gray-100 text-gray-900 font-bold px-2 py-0.5 rounded-full">
-                      ★ {driver.rating}
-                    </span>
-                    <span>{driver.trips} trips</span>
-                    <span>•</span>
-                    <span className="inline-flex items-center gap-1 text-[#25D366] font-semibold">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#25D366] animate-pulse"></span>
-                      WhatsApp Active
-                    </span>
-                  </div>
-
-                  <p className="text-xs text-gray-600 mt-4 line-clamp-2 leading-relaxed">
-                    {driver.bio}
-                  </p>
-
-                  {/* Transmissions */}
-                  <div className="flex flex-wrap gap-1.5 mt-4">
-                    {driver.transmissions.map((t) => (
-                      <span
-                        key={t}
-                        className="px-2.5 py-1 rounded-lg bg-gray-50 border border-gray-200 text-[11px] font-medium text-gray-600"
-                      >
-                        {t}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Actions */}
-                <div className="pt-6 mt-6 border-t border-gray-100 space-y-2">
-                  <a
-                    href={driverWhatsAppUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full py-2.5 bg-[#25D366] hover:bg-[#1EBE5D] text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition shadow-sm active:scale-95"
-                  >
-                    <WhatsAppIcon className="w-4 h-4 fill-current" />
-                    Chat on WhatsApp
-                  </a>
-
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => setSelectedDriver(driver)}
-                      className="w-1/2 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-xl text-xs font-semibold transition"
-                    >
-                      View Profile
-                    </button>
-                    <Link
-                      href="/book"
-                      className="w-1/2 text-center py-2 bg-black hover:bg-gray-800 text-white rounded-xl text-xs font-semibold transition"
-                    >
-                      Book Driver
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+                );
+              })}
+            </div>
+          )}
         </div>
+      </section>
 
-        {/* DRIVER PROFILE MODAL */}
-        {selectedDriver && (
-          <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
-            <div className="bg-white rounded-3xl max-w-lg w-full p-6 md:p-8 border border-gray-200 shadow-2xl animate-scale-in relative">
+      {/* Reviews & Rating Modal */}
+      {selectedDriverForReview && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 max-h-[90vh] overflow-y-auto border border-gray-200 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+              <div>
+                <h3 className="text-lg font-extrabold text-black">
+                  {selectedDriverForReview.name}
+                </h3>
+                <p className="text-xs text-gray-500">
+                  Rating: ★ {selectedDriverForReview.rating} ({selectedDriverForReview.trips} completed trips)
+                </p>
+              </div>
               <button
-                onClick={() => setSelectedDriver(null)}
-                className="absolute top-5 right-5 text-gray-400 hover:text-black p-1 rounded-full hover:bg-gray-100 transition"
+                type="button"
+                onClick={() => setSelectedDriverForReview(null)}
+                className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 flex items-center justify-center text-sm font-bold"
               >
                 ✕
               </button>
-
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-14 h-14 rounded-2xl bg-black text-white flex items-center justify-center font-bold text-xl">
-                  {selectedDriver.name.charAt(0)}
-                </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="text-xl font-extrabold text-black">{selectedDriver.name}</h3>
-                    <span className="text-xs bg-emerald-100 text-emerald-800 font-semibold px-2 py-0.5 rounded-full">
-                      Verified Chauffeur
-                    </span>
-                  </div>
-                  <p className="text-xs text-gray-500 mt-0.5">{selectedDriver.role}</p>
-                  <div className="text-xs font-bold text-black mt-1">★ {selectedDriver.rating} ({selectedDriver.trips} completed trips)</div>
-                </div>
-              </div>
-
-              <div className="space-y-4 text-sm text-gray-700">
-                <div>
-                  <h4 className="text-xs font-bold uppercase text-gray-400 tracking-wider">About Driver</h4>
-                  <p className="text-xs text-gray-600 mt-1 leading-relaxed">{selectedDriver.bio}</p>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3 pt-2">
-                  <div className="p-3 bg-gray-50 rounded-xl border border-gray-100">
-                    <div className="text-[11px] text-gray-400 font-medium">Standard Rate</div>
-                    <div className="text-base font-bold text-black mt-0.5">{selectedDriver.rate}</div>
-                  </div>
-                  <div className="p-3 bg-gray-50 rounded-xl border border-gray-100">
-                    <div className="text-[11px] text-gray-400 font-medium">Direct WhatsApp</div>
-                    <div className="text-base font-bold text-emerald-600 mt-0.5">Online Now</div>
-                  </div>
-                </div>
-
-                <div>
-                  <h4 className="text-xs font-bold uppercase text-gray-400 tracking-wider mb-2">Recent Client Reviews</h4>
-                  <div className="space-y-2">
-                    {selectedDriver.reviews.map((r, i) => (
-                      <div key={i} className="p-3 bg-gray-50 rounded-xl text-xs border border-gray-100">
-                        <div className="flex justify-between font-semibold text-black mb-1">
-                          <span>{r.author}</span>
-                          <span className="text-emerald-600">{"★".repeat(r.rating)}</span>
-                        </div>
-                        <p className="text-gray-600">{r.text}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-6 pt-4 border-t border-gray-100 space-y-2.5">
-                <a
-                  href={WHATSAPP_CONFIG.createWhatsAppLink(
-                    selectedDriver.phone,
-                    WHATSAPP_CONFIG.generateDriverInquiryMessage(selectedDriver.name, selectedDriver.role)
-                  )}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full py-3 bg-[#25D366] hover:bg-[#1EBE5D] text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition shadow-md active:scale-95"
-                >
-                  <WhatsAppIcon className="w-4 h-4 fill-current" />
-                  Direct WhatsApp Chat with {selectedDriver.name.split(" ")[0]}
-                </a>
-
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => setSelectedDriver(null)}
-                    className="w-1/2 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-xs font-semibold transition"
-                  >
-                    Close
-                  </button>
-                  <Link
-                    href="/book"
-                    className="w-1/2 text-center py-2.5 bg-black hover:bg-gray-800 text-white rounded-xl text-xs font-semibold transition shadow-sm"
-                  >
-                    Book Trip Form
-                  </Link>
-                </div>
-              </div>
             </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
 
-function WhatsAppIcon({ className = "w-4 h-4" }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z" />
-    </svg>
+            {/* Existing verified reviews */}
+            <div className="mt-4">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">
+                Verified Rider Feedback
+              </h4>
+              {selectedDriverForReview.reviews && selectedDriverForReview.reviews.length > 0 ? (
+                <div className="space-y-3">
+                  {selectedDriverForReview.reviews.map((rev, i) => (
+                    <div
+                      key={i}
+                      className="p-3 rounded-xl bg-gray-50 border border-gray-100 text-xs"
+                    >
+                      <div className="flex items-center justify-between font-bold text-gray-900">
+                        <span>{rev.author}</span>
+                        <span className="text-black">★ {rev.rating}</span>
+                      </div>
+                      <p className="text-gray-600 mt-1">{rev.comment || rev.text}</p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-xs text-gray-400 italic">No reviews yet. Be the first to rate!</p>
+              )}
+            </div>
+
+            {/* Leave a review form */}
+            <form onSubmit={handleSendReview} className="mt-6 pt-5 border-t border-gray-100">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-black mb-3">
+                Leave a Rating & Review
+              </h4>
+
+              {reviewSubmitted ? (
+                <div className="p-4 rounded-xl bg-gray-900 text-white text-xs font-bold text-center">
+                  ✓ Review submitted! Driver ranking has been updated dynamically.
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-600 mb-1">
+                      Your Name
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Ramesh K."
+                      value={reviewerName}
+                      onChange={(e) => setReviewerName(e.target.value)}
+                      className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-black"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-600 mb-1">
+                      Rating (1 to 5 Stars)
+                    </label>
+                    <div className="flex items-center gap-2">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          type="button"
+                          onClick={() => setReviewRating(star)}
+                          className={`w-9 h-9 rounded-xl font-bold text-xs flex items-center justify-center transition ${
+                            reviewRating >= star
+                              ? "bg-black text-white"
+                              : "bg-gray-100 text-gray-400 hover:bg-gray-200"
+                          }`}
+                        >
+                          ★ {star}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-600 mb-1">
+                      Your Review / Experience
+                    </label>
+                    <textarea
+                      required
+                      rows="3"
+                      placeholder="Share how the trip went, driving skills, punctuality..."
+                      value={reviewComment}
+                      onChange={(e) => setReviewComment(e.target.value)}
+                      className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-black"
+                    ></textarea>
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full py-2.5 bg-black text-white rounded-xl text-xs font-bold hover:bg-gray-800 transition shadow-sm"
+                  >
+                    Submit Review & Update Ranking
+                  </button>
+                </div>
+              )}
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
