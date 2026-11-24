@@ -47,10 +47,10 @@ export default function LoginPage() {
             DriveConnect
           </Link>
           <h1 className="text-2xl font-black mt-4">
-            {t("login")}
+            {t("loginTitle")}
           </h1>
           <p className="text-xs text-gray-500 mt-1">
-            Choose your account role to continue
+            {t("loginSubtitle")}
           </p>
         </div>
 
@@ -67,7 +67,7 @@ export default function LoginPage() {
                   : "text-gray-600 hover:text-black"
               }`}
             >
-              Driver
+              {t("driverRole")}
             </button>
             <button
               type="button"
@@ -78,7 +78,7 @@ export default function LoginPage() {
                   : "text-gray-600 hover:text-black"
               }`}
             >
-              Admin
+              {t("adminRole")}
             </button>
             <button
               type="button"
@@ -89,14 +89,14 @@ export default function LoginPage() {
                   : "text-gray-600 hover:text-black"
               }`}
             >
-              Rider
+              {t("riderRole")}
             </button>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">
-                Email Address
+                {t("emailAddress")}
               </label>
               <input
                 type="email"
@@ -117,10 +117,10 @@ export default function LoginPage() {
             <div>
               <div className="flex items-center justify-between mb-1.5">
                 <label className="text-xs font-bold text-gray-700 uppercase tracking-wider">
-                  Password
+                  {t("password")}
                 </label>
                 <span className="text-xs text-gray-400 hover:text-black cursor-pointer">
-                  Forgot?
+                  {t("forgotPassword")}
                 </span>
               </div>
               <input
@@ -141,10 +141,10 @@ export default function LoginPage() {
               {loading ? (
                 <>
                   <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                  Logging in...
+                  {t("loggingIn")}
                 </>
               ) : (
-                `Log In as ${role.toUpperCase()}`
+                `${t("loginBtn")} (${role.toUpperCase()})`
               )}
             </button>
           </form>
@@ -152,16 +152,15 @@ export default function LoginPage() {
           {/* Quick Demo Helper */}
           <div className="mt-6 pt-5 border-t border-gray-100 text-center">
             <p className="text-[11px] text-gray-500">
-              Demo credentials: Enter any email/password to explore as {role}.
+              {t("demoCredentials", { role: role.toUpperCase() })}
             </p>
           </div>
         </div>
 
         {/* Signup Link */}
         <p className="text-center text-xs text-gray-500 mt-6">
-          New driver looking to join?{" "}
           <Link href="/signup" className="font-bold text-black hover:underline">
-            Register for Verification
+            {t("newDriverRegister")}
           </Link>
         </p>
       </div>

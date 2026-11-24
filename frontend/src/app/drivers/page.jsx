@@ -103,7 +103,7 @@ export default function DriversPage() {
                   onClick={() => setSearch("")}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 hover:text-black font-bold p-1"
                 >
-                  Clear
+                  {t("clear")}
                 </button>
               )}
             </div>
@@ -165,8 +165,8 @@ export default function DriversPage() {
         <div className="max-w-6xl mx-auto">
           {filteredDrivers.length === 0 ? (
             <div className="text-center py-16 border border-dashed border-gray-300 rounded-3xl p-8">
-              <p className="text-lg font-bold text-gray-800">No drivers match your search.</p>
-              <p className="text-sm text-gray-500 mt-1">Try another city or transmission type.</p>
+              <p className="text-lg font-bold text-gray-800">{t("noDriversFound")}</p>
+              <p className="text-sm text-gray-500 mt-1">{t("tryAnotherSearch")}</p>
               <button
                 onClick={() => {
                   setSearch("");
@@ -174,7 +174,7 @@ export default function DriversPage() {
                 }}
                 className="mt-4 px-5 py-2.5 bg-black text-white rounded-xl text-xs font-bold hover:bg-gray-800 transition"
               >
-                Reset filters
+                {t("resetFilters")}
               </button>
             </div>
           ) : (
@@ -191,7 +191,7 @@ export default function DriversPage() {
                     {/* Top Rank Badge */}
                     {isTopRank && (
                       <div className="absolute -top-3 left-6 bg-black text-white text-[10px] font-black tracking-wider uppercase px-3 py-1 rounded-full shadow-sm">
-                        ★ #1 Top Rated Chauffeur
+                        {t("topChauffeurBadge")}
                       </div>
                     )}
 
@@ -284,10 +284,7 @@ export default function DriversPage() {
                           className="p-2.5 border border-gray-200 rounded-xl hover:bg-gray-50 transition text-gray-700 hover:text-black flex items-center justify-center"
                           title={t("chatWhatsApp")}
                         >
-                          <svg
-                            className="w-4 h-4 fill-current"
-                            viewBox="0 0 24 24"
-                          >
+                          <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
                             <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.861.174.086.275.072.376-.044.101-.116.433-.506.549-.68.116-.173.231-.145.39-.086s1.011.477 1.184.564.289.13.332.203c.043.072.043.419-.101.824z" />
                           </svg>
                         </a>
@@ -299,7 +296,7 @@ export default function DriversPage() {
                         onClick={() => handleOpenReview(driver)}
                         className="w-full text-center py-2 text-[11px] font-semibold text-gray-500 hover:text-black transition flex items-center justify-center gap-1"
                       >
-                        <span>View Reviews & Rate Driver</span>
+                        <span>{t("viewReviewsRate")}</span>
                         <span className="text-[10px]">({driver.reviews?.length || 0})</span>
                       </button>
                     </div>
@@ -321,7 +318,7 @@ export default function DriversPage() {
                   {selectedDriverForReview.name}
                 </h3>
                 <p className="text-xs text-gray-500">
-                  Rating: ★ {selectedDriverForReview.rating} ({selectedDriverForReview.trips} completed trips)
+                  {t("rating")}: ★ {selectedDriverForReview.rating} ({selectedDriverForReview.trips} {t("trips")})
                 </p>
               </div>
               <button
@@ -336,7 +333,7 @@ export default function DriversPage() {
             {/* Existing verified reviews */}
             <div className="mt-4">
               <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">
-                Verified Rider Feedback
+                {t("verifiedRiderFeedback")}
               </h4>
               {selectedDriverForReview.reviews && selectedDriverForReview.reviews.length > 0 ? (
                 <div className="space-y-3">
@@ -354,25 +351,25 @@ export default function DriversPage() {
                   ))}
                 </div>
               ) : (
-                <p className="text-xs text-gray-400 italic">No reviews yet. Be the first to rate!</p>
+                <p className="text-xs text-gray-400 italic">{t("noReviewsYet")}</p>
               )}
             </div>
 
             {/* Leave a review form */}
             <form onSubmit={handleSendReview} className="mt-6 pt-5 border-t border-gray-100">
               <h4 className="text-xs font-bold uppercase tracking-wider text-black mb-3">
-                Leave a Rating & Review
+                {t("leaveReviewTitle")}
               </h4>
 
               {reviewSubmitted ? (
                 <div className="p-4 rounded-xl bg-gray-900 text-white text-xs font-bold text-center">
-                  ✓ Review submitted! Driver ranking has been updated dynamically.
+                  {t("reviewSubmittedMsg")}
                 </div>
               ) : (
                 <div className="space-y-3">
                   <div>
                     <label className="block text-[11px] font-bold text-gray-600 mb-1">
-                      Your Name
+                      {t("yourName")}
                     </label>
                     <input
                       type="text"
@@ -385,7 +382,7 @@ export default function DriversPage() {
 
                   <div>
                     <label className="block text-[11px] font-bold text-gray-600 mb-1">
-                      Rating (1 to 5 Stars)
+                      {t("ratingStarsLabel")}
                     </label>
                     <div className="flex items-center gap-2">
                       {[1, 2, 3, 4, 5].map((star) => (
@@ -407,12 +404,12 @@ export default function DriversPage() {
 
                   <div>
                     <label className="block text-[11px] font-bold text-gray-600 mb-1">
-                      Your Review / Experience
+                      {t("yourReviewPlaceholder")}
                     </label>
                     <textarea
                       required
                       rows="3"
-                      placeholder="Share how the trip went, driving skills, punctuality..."
+                      placeholder={t("yourReviewPlaceholder")}
                       value={reviewComment}
                       onChange={(e) => setReviewComment(e.target.value)}
                       className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-black"
@@ -423,7 +420,7 @@ export default function DriversPage() {
                     type="submit"
                     className="w-full py-2.5 bg-black text-white rounded-xl text-xs font-bold hover:bg-gray-800 transition shadow-sm"
                   >
-                    Submit Review & Update Ranking
+                    {t("submitReviewBtn")}
                   </button>
                 </div>
               )}

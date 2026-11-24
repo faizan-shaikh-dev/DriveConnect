@@ -12,13 +12,13 @@ export default function PricingPage() {
         {/* Header (PDF Screen 04) */}
         <div className="max-w-2xl mb-12 sm:mb-16">
           <span className="text-xs font-bold uppercase tracking-wider text-gray-400 block mb-2">
-            PRICING
+            {t("pricingTag")}
           </span>
           <h1 className="text-3xl sm:text-5xl font-black text-black tracking-tight leading-tight">
-            Simple, transparent pricing
+            {t("pricingTitle")}
           </h1>
           <p className="text-sm sm:text-base text-gray-500 mt-3 leading-relaxed">
-            No surge pricing. No hidden fees.
+            {t("pricingSubtitle")}
           </p>
         </div>
 
@@ -27,66 +27,66 @@ export default function PricingPage() {
           {/* Hourly */}
           <div className="bg-white p-8 rounded-2xl border border-gray-200 shadow-xs flex flex-col justify-between">
             <div>
-              <span className="text-xs font-semibold text-gray-500">Hourly</span>
+              <span className="text-xs font-semibold text-gray-500">{t("hourlyPlan")}</span>
               <div className="my-5">
-                <span className="text-3xl sm:text-4xl font-extrabold text-black">₹399</span>
-                <span className="text-xs text-gray-500"> /hour</span>
+                <span className="text-3xl sm:text-4xl font-extrabold text-black">{t("hourlyRate")}</span>
+                <span className="text-xs text-gray-500"> {t("perHourUnit")}</span>
               </div>
               <ul className="space-y-3 text-xs text-gray-600 mb-8">
-                <li>— Minimum 2 hours</li>
-                <li>— City driving</li>
-                <li>— Verified driver</li>
+                <li>— {t("hourlyFeat1")}</li>
+                <li>— {t("hourlyFeat2")}</li>
+                <li>— {t("hourlyFeat3")}</li>
               </ul>
             </div>
             <Link
               href="/book"
               className="w-full py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 text-center rounded-xl text-xs font-semibold transition"
             >
-              Get started
+              {t("getStarted")}
             </Link>
           </div>
 
           {/* Full Day (Highlighted with black border and button) */}
           <div className="bg-white p-8 rounded-2xl border-2 border-black shadow-md flex flex-col justify-between relative">
             <div>
-              <span className="text-xs font-bold text-black uppercase tracking-wider">Full day</span>
+              <span className="text-xs font-bold text-black uppercase tracking-wider">{t("fullDayPlan")}</span>
               <div className="my-5">
-                <span className="text-3xl sm:text-4xl font-extrabold text-black">₹2,999</span>
-                <span className="text-xs text-gray-500"> /day</span>
+                <span className="text-3xl sm:text-4xl font-extrabold text-black">{t("fullDayRate")}</span>
+                <span className="text-xs text-gray-500"> {t("perDayUnit")}</span>
               </div>
               <ul className="space-y-3 text-xs text-gray-700 font-medium mb-8">
-                <li>— Up to 10 hours</li>
-                <li>— City & outstation</li>
-                <li>— Priority matching</li>
+                <li>— {t("fullDayFeat1")}</li>
+                <li>— {t("fullDayFeat2")}</li>
+                <li>— {t("fullDayFeat3")}</li>
               </ul>
             </div>
             <Link
               href="/book"
               className="w-full py-3 bg-black hover:bg-gray-800 text-white text-center rounded-xl text-xs font-semibold transition"
             >
-              Get started
+              {t("getStarted")}
             </Link>
           </div>
 
           {/* Monthly */}
           <div className="bg-white p-8 rounded-2xl border border-gray-200 shadow-xs flex flex-col justify-between">
             <div>
-              <span className="text-xs font-semibold text-gray-500">Monthly</span>
+              <span className="text-xs font-semibold text-gray-500">{t("monthlyPlan")}</span>
               <div className="my-5">
-                <span className="text-3xl sm:text-4xl font-extrabold text-black">₹24,999</span>
-                <span className="text-xs text-gray-500"> /month</span>
+                <span className="text-3xl sm:text-4xl font-extrabold text-black">{t("monthlyRate")}</span>
+                <span className="text-xs text-gray-500"> {t("perMonthUnit")}</span>
               </div>
               <ul className="space-y-3 text-xs text-gray-600 mb-8">
-                <li>— Dedicated driver</li>
-                <li>— Flexible schedule</li>
-                <li>— Account manager</li>
+                <li>— {t("monthlyFeat1")}</li>
+                <li>— {t("monthlyFeat2")}</li>
+                <li>— {t("monthlyFeat3")}</li>
               </ul>
             </div>
             <Link
               href="/book"
               className="w-full py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 text-center rounded-xl text-xs font-semibold transition"
             >
-              Get started
+              {t("getStarted")}
             </Link>
           </div>
         </div>

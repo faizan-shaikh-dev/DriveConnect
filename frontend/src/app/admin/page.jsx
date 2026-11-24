@@ -6,7 +6,7 @@ import { useLanguage } from "@/context/LanguageContext";
 import { useApp } from "@/context/AppContext";
 
 export default function AdminDashboard() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const {
     drivers,
     pendingApplicants,
@@ -44,15 +44,23 @@ export default function AdminDashboard() {
     },
   ]);
 
+  // Days localization
+  const daysLabels = {
+    en: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+    hi: ["सोम", "मंगल", "बुध", "गुरु", "शुक्र", "शनि", "रवि"],
+    mr: ["सोम", "मंगळ", "बुध", "गुरू", "शुक्र", "शनि", "रवि"],
+  };
+  const currentDays = daysLabels[language] || daysLabels["en"];
+
   // Weekly bookings activity data (Screen 11)
   const weeklyBookings = [
-    { day: "Mon", count: 48, height: "55%" },
-    { day: "Tue", count: 62, height: "70%" },
-    { day: "Wed", count: 75, height: "85%" },
-    { day: "Thu", count: 58, height: "65%" },
-    { day: "Fri", count: 88, height: "100%" },
-    { day: "Sat", count: 82, height: "92%" },
-    { day: "Sun", count: 42, height: "48%" },
+    { day: currentDays[0], count: 48, height: "55%" },
+    { day: currentDays[1], count: 62, height: "70%" },
+    { day: currentDays[2], count: 75, height: "85%" },
+    { day: currentDays[3], count: 58, height: "65%" },
+    { day: currentDays[4], count: 88, height: "100%" },
+    { day: currentDays[5], count: 82, height: "92%" },
+    { day: currentDays[6], count: 42, height: "48%" },
   ];
 
   const handleReject = (id, name) => {
@@ -67,10 +75,10 @@ export default function AdminDashboard() {
           <div>
             <div className="flex items-center gap-2">
               <span className="text-xs font-bold uppercase tracking-wider text-gray-400">
-                Operations & Verification
+                {t("opsVerification")}
               </span>
               <span className="w-1.5 h-1.5 rounded-full bg-gray-300"></span>
-              <span className="text-xs text-gray-500">Superadmin Access</span>
+              <span className="text-xs text-gray-500">{t("superadminAccess")}</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-black mt-1">
               {t("adminDashboard")}
@@ -80,7 +88,7 @@ export default function AdminDashboard() {
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-gray-200 bg-gray-50 text-xs">
               <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-              <span className="font-bold text-gray-700">Dispatch Operational</span>
+              <span className="font-bold text-gray-700">{t("dispatchOperational")}</span>
             </div>
 
             <Link
@@ -95,29 +103,29 @@ export default function AdminDashboard() {
         {/* 4 Metric Cards (Screen 11) */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
-            <span className="text-xs text-gray-500 font-semibold">Total Bookings</span>
+            <span className="text-xs text-gray-500 font-semibold">{t("totalBookings")}</span>
             <div className="text-2xl sm:text-3xl font-black text-black mt-1">12,480</div>
-            <span className="text-[11px] text-gray-400 font-medium">All-time rides</span>
+            <span className="text-[11px] text-gray-400 font-medium">{t("allTimeRides")}</span>
           </div>
 
           <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
-            <span className="text-xs text-gray-500 font-semibold">Active Drivers</span>
+            <span className="text-xs text-gray-500 font-semibold">{t("activeDrivers")}</span>
             <div className="text-2xl sm:text-3xl font-black text-black mt-1">
-              {drivers.length} Verified
+              {(drivers || []).length} Verified
             </div>
-            <span className="text-[11px] text-gray-400 font-medium">Across 12 cities</span>
+            <span className="text-[11px] text-gray-400 font-medium">{t("verifiedInCities")}</span>
           </div>
 
           <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
-            <span className="text-xs text-gray-500 font-semibold">Revenue (Month)</span>
+            <span className="text-xs text-gray-500 font-semibold">{t("monthlyRevenue")}</span>
             <div className="text-2xl sm:text-3xl font-black text-black mt-1">₹48.2L</div>
-            <span className="text-[11px] text-gray-400 font-medium">+14% vs previous</span>
+            <span className="text-[11px] text-gray-400 font-medium">{t("revenueGrowth")}</span>
           </div>
 
           <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
             <span className="text-xs text-gray-500 font-semibold">{t("rating")}</span>
             <div className="text-2xl sm:text-3xl font-black text-black mt-1">★ 4.8</div>
-            <span className="text-[11px] text-gray-400 font-medium">Average rider score</span>
+            <span className="text-[11px] text-gray-400 font-medium">{t("avgRiderScore")}</span>
           </div>
         </div>
 
@@ -128,20 +136,20 @@ export default function AdminDashboard() {
               <h2 className="text-lg font-black text-black flex items-center gap-2">
                 <span>{t("driverApprovals")}</span>
                 <span className="px-2 py-0.5 rounded-full bg-black text-white text-[10px] font-black">
-                  {pendingApplicants.length} PENDING
+                  {t("pendingBadge", { count: (pendingApplicants || []).length })}
                 </span>
               </h2>
               <p className="text-xs text-gray-500 mt-0.5">
-                Verify driving license and collect one-time ₹499 INR platform fee to activate driver in directory.
+                {t("verifyLicenseAdminDesc")}
               </p>
             </div>
           </div>
 
-          {pendingApplicants.length === 0 ? (
+          {(!pendingApplicants || pendingApplicants.length === 0) ? (
             <div className="text-center py-8 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
-              <p className="text-xs font-bold text-gray-700">All driver applications reviewed!</p>
+              <p className="text-xs font-bold text-gray-700">{t("allDriversReviewed")}</p>
               <p className="text-[11px] text-gray-400 mt-0.5">
-                New driver submissions from /signup will appear here instantly.
+                {t("newSubmissionsNote")}
               </p>
             </div>
           ) : (
@@ -149,13 +157,13 @@ export default function AdminDashboard() {
               <table className="w-full text-left text-xs">
                 <thead>
                   <tr className="border-b border-gray-200 text-gray-400 font-bold uppercase tracking-wider">
-                    <th className="pb-3 pr-4">Applicant</th>
-                    <th className="pb-3 pr-4">Location</th>
-                    <th className="pb-3 pr-4">License No.</th>
-                    <th className="pb-3 pr-4">Experience</th>
-                    <th className="pb-3 pr-4">Rate</th>
-                    <th className="pb-3 pr-4">Platform Fee</th>
-                    <th className="pb-3 text-right">Action</th>
+                    <th className="pb-3 pr-4">{t("applicantCol")}</th>
+                    <th className="pb-3 pr-4">{t("locationCol")}</th>
+                    <th className="pb-3 pr-4">{t("licenseCol")}</th>
+                    <th className="pb-3 pr-4">{t("expCol")}</th>
+                    <th className="pb-3 pr-4">{t("rateCol")}</th>
+                    <th className="pb-3 pr-4">{t("feeCol")}</th>
+                    <th className="pb-3 text-right">{t("actionCol")}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100 font-medium">
@@ -175,7 +183,7 @@ export default function AdminDashboard() {
                       <td className="py-4 pr-4 font-bold text-black">₹{applicant.rate}/hr</td>
                       <td className="py-4 pr-4">
                         <span className="inline-block px-2.5 py-1 rounded-lg bg-gray-100 text-gray-700 text-[11px] font-bold">
-                          ₹499 Due
+                          {t("feeDueTag")}
                         </span>
                       </td>
                       <td className="py-4 text-right">
@@ -185,7 +193,7 @@ export default function AdminDashboard() {
                             onClick={() => approveDriverKYC(applicant.id)}
                             className="px-3.5 py-2 bg-black text-white rounded-xl text-xs font-bold hover:bg-gray-800 transition shadow-sm"
                           >
-                            {t("approveBtn")} (₹499 Paid)
+                            {t("approveBtn")}
                           </button>
                           <button
                             type="button"
@@ -210,19 +218,19 @@ export default function AdminDashboard() {
             <h3 className="text-base font-extrabold text-black">
               {t("activeTrips")}
             </h3>
-            <span className="text-xs text-gray-500">Real-time trip dispatch monitor</span>
+            <span className="text-xs text-gray-500">{t("realtimeMonitor")}</span>
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead>
                 <tr className="border-b border-gray-200 text-gray-400 font-bold uppercase tracking-wider">
-                  <th className="pb-3 pr-4">Trip ID</th>
-                  <th className="pb-3 pr-4">Rider</th>
-                  <th className="pb-3 pr-4">Assigned Driver</th>
-                  <th className="pb-3 pr-4">Pickup</th>
-                  <th className="pb-3 pr-4">Status</th>
-                  <th className="pb-3 text-right">Fare</th>
+                  <th className="pb-3 pr-4">{t("tripIdCol")}</th>
+                  <th className="pb-3 pr-4">{t("riderCol")}</th>
+                  <th className="pb-3 pr-4">{t("driverCol")}</th>
+                  <th className="pb-3 pr-4">{t("pickupCol")}</th>
+                  <th className="pb-3 pr-4">{t("statusCol")}</th>
+                  <th className="pb-3 text-right">{t("fareCol")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 font-medium">
@@ -256,12 +264,12 @@ export default function AdminDashboard() {
             <h3 className="text-base font-extrabold text-black">
               {t("weeklyActivity")}
             </h3>
-            <span className="text-xs text-gray-500">Platform Bookings Volume</span>
+            <span className="text-xs text-gray-500">{t("bookingsVolume")}</span>
           </div>
 
           <div className="h-44 flex items-end justify-between gap-3 pt-6 border-b border-gray-200 px-2 sm:px-6">
-            {weeklyBookings.map((d) => (
-              <div key={d.day} className="flex-1 flex flex-col items-center gap-2 h-full justify-end">
+            {weeklyBookings.map((d, idx) => (
+              <div key={idx} className="flex-1 flex flex-col items-center gap-2 h-full justify-end">
                 <span className="text-[10px] font-bold text-gray-600">{d.count}</span>
                 <div
                   className="w-full max-w-[36px] bg-black rounded-t-lg transition-all"

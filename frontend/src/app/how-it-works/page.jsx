@@ -12,13 +12,13 @@ export default function HowItWorksPage() {
         {/* Header (PDF Screen 03) */}
         <div className="max-w-2xl mb-12 sm:mb-16">
           <span className="text-xs font-bold uppercase tracking-wider text-gray-400 block mb-2">
-            HOW IT WORKS
+            {t("hiwTag")}
           </span>
           <h1 className="text-3xl sm:text-5xl font-black text-black tracking-tight leading-tight">
-            Three steps to a stress-free drive
+            {t("hiwTitle")}
           </h1>
           <p className="text-sm sm:text-base text-gray-500 mt-3 leading-relaxed">
-            Simple, transparent and built around your schedule.
+            {t("hiwSubtitle")}
           </p>
         </div>
 
@@ -29,9 +29,9 @@ export default function HowItWorksPage() {
               <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center font-bold text-xs mb-6">
                 1
               </div>
-              <h3 className="text-base font-bold text-black mb-2">Choose a time</h3>
+              <h3 className="text-base font-bold text-black mb-2">{t("hiwStep1Title")}</h3>
               <p className="text-xs text-gray-500 leading-relaxed">
-                Pick your date, pickup location and how long you need a driver.
+                {t("hiwStep1Desc")}
               </p>
             </div>
           </div>
@@ -41,9 +41,9 @@ export default function HowItWorksPage() {
               <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center font-bold text-xs mb-6">
                 2
               </div>
-              <h3 className="text-base font-bold text-black mb-2">Get matched</h3>
+              <h3 className="text-base font-bold text-black mb-2">{t("hiwStep2Title")}</h3>
               <p className="text-xs text-gray-500 leading-relaxed">
-                We assign a verified driver near you within minutes. Direct WhatsApp contact shared immediately.
+                {t("hiwStep2Desc")}
               </p>
             </div>
           </div>
@@ -53,9 +53,9 @@ export default function HowItWorksPage() {
               <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center font-bold text-xs mb-6">
                 3
               </div>
-              <h3 className="text-base font-bold text-black mb-2">Enjoy the ride</h3>
+              <h3 className="text-base font-bold text-black mb-2">{t("hiwStep3Title")}</h3>
               <p className="text-xs text-gray-500 leading-relaxed">
-                Sit back in your own car. Pay securely when you're done. Rate your driver to help the community.
+                {t("hiwStep3Desc")}
               </p>
             </div>
           </div>
@@ -73,7 +73,7 @@ export default function HowItWorksPage() {
             href="/pricing"
             className="px-8 py-3.5 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium rounded-full text-xs sm:text-sm transition text-center"
           >
-            See pricing
+            {t("seePricing")}
           </Link>
         </div>
       </div>

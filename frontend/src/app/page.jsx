@@ -8,19 +8,18 @@ export default function Home() {
   const { t } = useLanguage();
   const { drivers } = useApp();
 
-  const topDrivers = drivers.slice(0, 3);
+  const topDrivers = (drivers || []).slice(0, 3);
 
   return (
     <div className="w-full bg-white text-gray-900">
-      {/* HERO SECTION */}
+      {/* HERO SECTION (PDF Screen 01) */}
       <section className="pt-12 pb-16 sm:pt-20 sm:pb-24 border-b border-gray-100">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
           <span className="text-[11px] font-bold uppercase tracking-widest text-gray-400 mb-3 block">
-            TRUSTED BY 50,000+ RIDERS
+            {t("trustedRiders")}
           </span>
-          <h1 className="text-4xl sm:text-6xl font-black tracking-tight text-black leading-[1.1] mb-6">
-            Your car. Our driver. <br />
-            Anywhere.
+          <h1 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight text-black leading-[1.1] mb-6">
+            {t("brandTagline")}
           </h1>
           <p className="text-sm sm:text-base text-gray-500 max-w-xl mx-auto mb-8 leading-relaxed">
             {t("heroSubtitle")}
@@ -72,9 +71,11 @@ export default function Home() {
       <section className="py-12 sm:py-20 bg-white border-b border-gray-100">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-xl sm:text-2xl font-bold text-black tracking-tight">Top-rated drivers</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-black tracking-tight">
+              {t("topRatedDrivers")}
+            </h2>
             <Link href="/drivers" className="text-xs font-semibold text-gray-500 hover:text-black transition">
-              View all →
+              {t("viewAll")}
             </Link>
           </div>
 
@@ -93,11 +94,13 @@ export default function Home() {
                 </p>
                 <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
                   <span className="text-xs font-bold text-black">₹{driver.rate}/hr</span>
-                  <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
-                    driver.status === "available"
-                      ? "bg-gray-100 text-gray-800"
-                      : "bg-black text-white"
-                  }`}>
+                  <span
+                    className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
+                      driver.status === "available"
+                        ? "bg-gray-100 text-gray-800"
+                        : "bg-black text-white"
+                    }`}
+                  >
                     {driver.status === "available" ? t("available") : t("onTrip")}
                   </span>
                 </div>
@@ -112,10 +115,10 @@ export default function Home() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
           <div className="bg-black text-white rounded-3xl p-8 sm:p-14 text-center">
             <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-3">
-              Drive with DriveConnect
+              {t("driveWithUsTitle")}
             </h2>
             <p className="text-xs sm:text-sm text-gray-400 max-w-md mx-auto mb-8 leading-relaxed">
-              Earn on your schedule. Join thousands of verified professional drivers. Platform fee only ₹499 with direct client connections.
+              {t("driveWithUsDesc")}
             </p>
             <Link
               href="/signup"

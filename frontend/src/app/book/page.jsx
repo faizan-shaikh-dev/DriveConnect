@@ -35,13 +35,15 @@ function BookContent() {
   }, [preselectedDriverId]);
 
   const selectedDriver =
-    drivers.find((d) => d.id === formData.driverId) || drivers[0] || {
+    (drivers || []).find((d) => d.id === formData.driverId) || (drivers && drivers[0]) || {
       id: "arjun",
       name: "Arjun Mehta",
       rate: 450,
       phone: "919876543211",
       city: "Mumbai",
       car: "Toyota Camry",
+      rating: 4.9,
+      trips: 1240,
     };
 
   const hoursNum = parseInt(formData.duration, 10) || 4;
@@ -57,8 +59,8 @@ function BookContent() {
       destination: formData.destination || "City Destination",
       date: formData.date || "Today",
       time: formData.time || "Immediate",
-      duration: `${formData.duration} hours`,
-      carType: formData.carType,
+      duration: `${formData.duration} ${t("hours2").includes("तास") ? "तास" : t("hours2").includes("घंटे") ? "घंटे" : "hours"}`,
+      carType: formData.carType === "Automatic" ? t("automatic") : t("manual"),
       totalFare: estimatedTotal,
       clientName: formData.clientName || "Valued Rider",
       clientPhone: formData.clientPhone || "919820012345",
@@ -95,31 +97,31 @@ function BookContent() {
           {/* Booking Summary Box */}
           <div className="mt-6 bg-gray-50 rounded-2xl p-4 text-left border border-gray-100 space-y-2 text-xs">
             <div className="flex justify-between">
-              <span className="text-gray-500">Booking ID</span>
+              <span className="text-gray-500">{t("bookingId")}</span>
               <span className="font-bold text-black">{confirmedBooking.id}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-500">Assigned Driver</span>
+              <span className="text-gray-500">{t("assignedDriver")}</span>
               <span className="font-bold text-black">{confirmedBooking.driver.name}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-500">Pickup Location</span>
+              <span className="text-gray-500">{t("pickupLocation")}</span>
               <span className="font-bold text-black truncate max-w-[200px]">
                 {confirmedBooking.pickup}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-500">Schedule</span>
+              <span className="text-gray-500">{t("schedule")}</span>
               <span className="font-bold text-black">
                 {confirmedBooking.date} • {confirmedBooking.time}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-500">Duration</span>
+              <span className="text-gray-500">{t("duration")}</span>
               <span className="font-bold text-black">{confirmedBooking.duration}</span>
             </div>
             <div className="pt-2 border-t border-gray-200 flex justify-between font-black text-sm">
-              <span>Estimated Fare</span>
+              <span>{t("totalEstFare")}</span>
               <span>₹{confirmedBooking.totalFare}</span>
             </div>
           </div>
@@ -159,7 +161,7 @@ function BookContent() {
             href="/drivers"
             className="inline-flex items-center gap-1 text-xs font-bold text-gray-500 hover:text-black mb-4 transition"
           >
-            ← Back to drivers
+            {t("backToDrivers")}
           </Link>
           <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
             {t("bookingTitle")}
@@ -180,7 +182,7 @@ function BookContent() {
                 {selectedDriver.name}
               </div>
               <div className="text-xs text-gray-500">
-                {selectedDriver.city} • ★ {selectedDriver.rating} ({selectedDriver.trips} trips)
+                {selectedDriver.city} • ★ {selectedDriver.rating} ({selectedDriver.trips} {t("trips")})
               </div>
             </div>
           </div>
@@ -190,7 +192,7 @@ function BookContent() {
               href="/drivers"
               className="text-[11px] text-gray-500 hover:text-black font-semibold underline"
             >
-              Change driver
+              {t("changeDriver")}
             </Link>
           </div>
         </div>
@@ -205,7 +207,7 @@ function BookContent() {
             <input
               type="text"
               required
-              placeholder="e.g. 742 Evergreen Terrace, Mumbai"
+              placeholder={t("pickupAddressPlaceholder")}
               value={formData.pickup}
               onChange={(e) => setFormData({ ...formData, pickup: e.target.value })}
               className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-black transition"
@@ -297,7 +299,7 @@ function BookContent() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
-                Your Name
+                {t("yourName")}
               </label>
               <input
                 type="text"
@@ -310,7 +312,7 @@ function BookContent() {
             </div>
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
-                WhatsApp Phone Number
+                {t("whatsappPhone")}
               </label>
               <input
                 type="tel"
@@ -326,15 +328,15 @@ function BookContent() {
           {/* Pricing Estimation summary */}
           <div className="p-4 rounded-2xl bg-gray-50 border border-gray-200 space-y-2">
             <div className="flex justify-between text-xs text-gray-600">
-              <span>Driver Hourly Rate</span>
+              <span>{t("driverHourlyRate")}</span>
               <span>₹{selectedDriver.rate} / hr</span>
             </div>
             <div className="flex justify-between text-xs text-gray-600">
-              <span>Duration</span>
-              <span>{formData.duration} Hours</span>
+              <span>{t("duration")}</span>
+              <span>{formData.duration} {t("hours2").includes("तास") ? "तास" : t("hours2").includes("घंटे") ? "घंटे" : "Hours"}</span>
             </div>
             <div className="pt-2 border-t border-gray-200 flex justify-between font-black text-base text-black">
-              <span>Total Estimated Fare</span>
+              <span>{t("totalEstFare")}</span>
               <span>₹{estimatedTotal}</span>
             </div>
           </div>
