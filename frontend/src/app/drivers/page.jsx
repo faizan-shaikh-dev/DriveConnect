@@ -199,11 +199,21 @@ export default function DriversPage() {
                       {/* Header info */}
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-xl bg-gray-100 border border-gray-200 flex items-center justify-center font-extrabold text-base text-black">
-                            {driver.name
-                              .split(" ")
-                              .map((n) => n[0])
-                              .join("")}
+                          <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-gray-100 border border-gray-200 shrink-0">
+                            {driver.avatar ? (
+                              <img
+                                src={driver.avatar}
+                                alt={driver.name}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center font-extrabold text-base text-black">
+                                {driver.name
+                                  .split(" ")
+                                  .map((n) => n[0])
+                                  .join("")}
+                              </div>
+                            )}
                           </div>
                           <div>
                             <h3 className="font-extrabold text-lg text-black leading-tight">

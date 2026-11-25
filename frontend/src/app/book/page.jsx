@@ -174,8 +174,18 @@ function BookContent() {
         {/* Selected Driver Banner */}
         <div className="mb-8 p-4 rounded-2xl border border-gray-200 bg-gray-50 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-black text-white font-extrabold text-sm flex items-center justify-center">
-              {selectedDriver.name[0]}
+            <div className="relative w-11 h-11 rounded-xl overflow-hidden bg-gray-100 border border-gray-200 shrink-0">
+              {selectedDriver.avatar ? (
+                <img
+                  src={selectedDriver.avatar}
+                  alt={selectedDriver.name}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full bg-black text-white font-extrabold text-sm flex items-center justify-center">
+                  {selectedDriver.name[0]}
+                </div>
+              )}
             </div>
             <div>
               <div className="font-extrabold text-sm text-black">

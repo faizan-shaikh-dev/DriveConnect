@@ -22,13 +22,21 @@ export default function HowItWorksPage() {
           </p>
         </div>
 
-        {/* 3 Step Cards */}
+        {/* 3 Step Cards with Authentic Service Images */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <div className="bg-white p-8 rounded-2xl border border-gray-200 shadow-xs flex flex-col justify-between">
-            <div>
-              <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center font-bold text-xs mb-6">
+          {/* Step 1 */}
+          <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-xs flex flex-col justify-between hover:border-black transition">
+            <div className="h-44 w-full bg-gray-100 overflow-hidden relative">
+              <img
+                src="/images/hero-car.jpg"
+                alt="Choose your time"
+                className="w-full h-full object-cover"
+              />
+              <span className="absolute top-3 left-3 w-8 h-8 rounded-full bg-black text-white flex items-center justify-center font-bold text-xs shadow-md">
                 1
-              </div>
+              </span>
+            </div>
+            <div className="p-6">
               <h3 className="text-base font-bold text-black mb-2">{t("hiwStep1Title")}</h3>
               <p className="text-xs text-gray-500 leading-relaxed">
                 {t("hiwStep1Desc")}
@@ -36,11 +44,19 @@ export default function HowItWorksPage() {
             </div>
           </div>
 
-          <div className="bg-white p-8 rounded-2xl border border-gray-200 shadow-xs flex flex-col justify-between">
-            <div>
-              <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center font-bold text-xs mb-6">
+          {/* Step 2 */}
+          <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-xs flex flex-col justify-between hover:border-black transition">
+            <div className="h-44 w-full bg-gray-100 overflow-hidden relative">
+              <img
+                src="/images/executive-chauffeur.jpg"
+                alt="Get matched"
+                className="w-full h-full object-cover"
+              />
+              <span className="absolute top-3 left-3 w-8 h-8 rounded-full bg-black text-white flex items-center justify-center font-bold text-xs shadow-md">
                 2
-              </div>
+              </span>
+            </div>
+            <div className="p-6">
               <h3 className="text-base font-bold text-black mb-2">{t("hiwStep2Title")}</h3>
               <p className="text-xs text-gray-500 leading-relaxed">
                 {t("hiwStep2Desc")}
@@ -48,11 +64,19 @@ export default function HowItWorksPage() {
             </div>
           </div>
 
-          <div className="bg-white p-8 rounded-2xl border border-gray-200 shadow-xs flex flex-col justify-between">
-            <div>
-              <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center font-bold text-xs mb-6">
+          {/* Step 3 */}
+          <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-xs flex flex-col justify-between hover:border-black transition">
+            <div className="h-44 w-full bg-gray-100 overflow-hidden relative">
+              <img
+                src="/images/passenger-relaxing.jpg"
+                alt="Enjoy the ride"
+                className="w-full h-full object-cover"
+              />
+              <span className="absolute top-3 left-3 w-8 h-8 rounded-full bg-black text-white flex items-center justify-center font-bold text-xs shadow-md">
                 3
-              </div>
+              </span>
+            </div>
+            <div className="p-6">
               <h3 className="text-base font-bold text-black mb-2">{t("hiwStep3Title")}</h3>
               <p className="text-xs text-gray-500 leading-relaxed">
                 {t("hiwStep3Desc")}

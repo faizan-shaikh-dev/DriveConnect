@@ -23,7 +23,7 @@ export default function PricingPage() {
         </div>
 
         {/* 3 Pricing Cards (PDF Screen 04) */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch mb-12">
           {/* Hourly */}
           <div className="bg-white p-8 rounded-2xl border border-gray-200 shadow-xs flex flex-col justify-between">
             <div>
@@ -47,7 +47,7 @@ export default function PricingPage() {
           </div>
 
           {/* Full Day (Highlighted with black border and button) */}
-          <div className="bg-white p-8 rounded-2xl border-2 border-black shadow-md flex flex-col justify-between relative">
+          <div className="bg-white p-8 rounded-2xl border-2 border-black shadow-md flex flex-col justify-between relative overflow-hidden">
             <div>
               <span className="text-xs font-bold text-black uppercase tracking-wider">{t("fullDayPlan")}</span>
               <div className="my-5">
@@ -62,7 +62,7 @@ export default function PricingPage() {
             </div>
             <Link
               href="/book"
-              className="w-full py-3 bg-black hover:bg-gray-800 text-white text-center rounded-xl text-xs font-semibold transition"
+              className="w-full py-3 bg-black hover:bg-gray-800 text-white text-center rounded-xl text-xs font-semibold transition shadow-sm"
             >
               {t("getStarted")}
             </Link>
@@ -87,6 +87,33 @@ export default function PricingPage() {
               className="w-full py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 text-center rounded-xl text-xs font-semibold transition"
             >
               {t("getStarted")}
+            </Link>
+          </div>
+        </div>
+
+        {/* Visual Outstation / Corporate Banner */}
+        <div className="relative rounded-3xl overflow-hidden p-8 sm:p-10 bg-black text-white border border-gray-800 shadow-lg">
+          <div
+            className="absolute inset-0 bg-cover bg-center opacity-30 scale-105"
+            style={{ backgroundImage: `url('/images/highway-trip.jpg')` }}
+          ></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent"></div>
+
+          <div className="relative z-10 max-w-xl">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-gray-400 block mb-2">
+              Custom Requirements
+            </span>
+            <h3 className="text-xl sm:text-2xl font-black mb-3">
+              Need Intercity Highway Trips or Monthly Corporate Fleet Drivers?
+            </h3>
+            <p className="text-xs sm:text-sm text-gray-300 mb-6 leading-relaxed">
+              We provide certified chauffeurs for multi-day outstation journeys, luxury SUVs, and corporate monthly retainers with direct billing.
+            </p>
+            <Link
+              href="/contact"
+              className="inline-block px-6 py-3 bg-white text-black text-xs font-bold rounded-full hover:bg-gray-200 transition"
+            >
+              Contact Corporate Sales
             </Link>
           </div>
         </div>

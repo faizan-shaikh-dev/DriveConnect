@@ -51,6 +51,20 @@ export const translations = {
     benefit3Title: "24/7 support",
     benefit3Desc: "We're here whenever you're on the road.",
     
+    // Services Showcase
+    ourServicesTitle: "Chauffeuring Services for Every Occasion",
+    ourServicesSub: "Tailored professional drivers for your personal vehicle.",
+    serviceExecutiveTitle: "Executive & Corporate Transit",
+    serviceExecutiveDesc: "Airport transfers, business meetings, and effortless city commutes in luxury vehicles.",
+    serviceFamilyTitle: "Family & Senior Care",
+    serviceFamilyDesc: "Doctor visits, shopping runs, and family outings with patient, safety-certified drivers.",
+    serviceOutstationTitle: "Highway & Outstation Trips",
+    serviceOutstationDesc: "Expressways, weekend getaways, and scenic routes with experienced highway specialists.",
+    serviceNightTitle: "Night-Out & Event Chauffeur",
+    serviceNightDesc: "Enjoy your dinners and parties. Our trusted driver brings you and your car home safely.",
+    pauseVideo: "Pause video",
+    playVideo: "Play video",
+    
     // How It Works
     hiwTag: "HOW IT WORKS",
     hiwTitle: "Three steps to a stress-free drive",
@@ -315,6 +329,20 @@ export const translations = {
     benefit3Title: "24/7 सहायता",
     benefit3Desc: "जब भी आप सड़क पर हों, हम सदैव आपके साथ हैं।",
     
+    // Services Showcase
+    ourServicesTitle: "हर अवसर के लिए व्यक्तिगत ड्राइवर सेवाएं",
+    ourServicesSub: "आपकी अपनी कार के लिए विशेष रूप से प्रशिक्षित प्रोफेशनल ड्राइवर्स।",
+    serviceExecutiveTitle: "कॉर्पोरेट और बिजनेस यात्रा",
+    serviceExecutiveDesc: "एयरपोर्ट पिकअप, बिजनेस मीटिंग्स और ट्रैफिक मुक्त आरामदायक सफर।",
+    serviceFamilyTitle: "परिवार और वरिष्ठ नागरिक यात्रा",
+    serviceFamilyDesc: "हॉस्पिटल विजिट्स, शॉपिंग और पारिवारिक यात्राओं के लिए विनम्र और सुरक्षित ड्राइवर्स।",
+    serviceOutstationTitle: "हाईवे और आउटस्टेशन यात्रा",
+    serviceOutstationDesc: "लंबी दूरी की हाईवे यात्राओं और हिल स्टेशनों के लिए अनुभवी ड्राइवर्स।",
+    serviceNightTitle: "इवेंट और नाइट-आउट ड्राइवर",
+    serviceNightDesc: "पार्टी या डिनर के बाद सुरक्षित घर वापसी के लिए आपका विश्वसनीय ड्राइवर।",
+    pauseVideo: "वीडियो रोकें",
+    playVideo: "वीडियो चलाएं",
+    
     // How It Works
     hiwTag: "यह कैसे काम करता है",
     hiwTitle: "तनावमुक्त यात्रा के 3 आसान कदम",
@@ -578,6 +606,20 @@ export const translations = {
     benefit2Desc: "कोणत्याही छुपे शुल्क किंवा अचानक वाढीशिवाय तासाचे दर.",
     benefit3Title: "२४/७ सहाय्य",
     benefit3Desc: "तुम्ही रस्त्यावर असताना आम्ही सदैव तुमच्यासोबत आहोत.",
+    
+    // Services Showcase
+    ourServicesTitle: "प्रत्येक प्रसंगासाठी वैयक्तिक ड्रायव्हर सेवा",
+    ourServicesSub: "तुमच्या स्वतःच्या वाहनासाठी प्रशिक्षित व्यावसायिक ड्रायव्हर्स.",
+    serviceExecutiveTitle: "कॉर्पोरेट आणि व्यावसायिक प्रवास",
+    serviceExecutiveDesc: "विमानतळ पिकअप, व्यावसायिक बैठका आणि आरामदायी प्रवास.",
+    serviceFamilyTitle: "कुटुंब आणि ज्येष्ठ नागरिक काळजी",
+    serviceFamilyDesc: "दवाखाना, खरेदी आणि कौटुंबिक प्रवासासाठी सुरक्षित ड्रायव्हर्स.",
+    serviceOutstationTitle: "हायवे आणि शहराबाहेर प्रवास",
+    serviceOutstationDesc: "लांब पल्ल्याच्या हायवे प्रवासासाठी अनुभवी ड्रायव्हर्स.",
+    serviceNightTitle: "नाईट-आउट आणि कार्यक्रम ड्रायव्हर",
+    serviceNightDesc: "पार्टी किंवा जेवणानंतर सुरक्षित प्रवासासाठी तुमचा विश्वासू ड्रायव्हर.",
+    pauseVideo: "व्हिडिओ थांबवा",
+    playVideo: "व्हिडिओ सुरू करा",
     
     // How It Works
     hiwTag: "हे कसे कार्य करते",
