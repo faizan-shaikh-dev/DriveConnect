@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useLanguage } from "@/context/LanguageContext";
 import { useApp } from "@/context/AppContext";
@@ -10,6 +10,22 @@ export default function Home() {
   const { drivers } = useApp();
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(true);
+
+  // Guarantee browser autoplay compliance (Chrome, Safari, Edge)
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.defaultMuted = true;
+      videoRef.current.muted = true;
+      videoRef.current.setAttribute("muted", "");
+      videoRef.current.setAttribute("playsinline", "");
+      const playPromise = videoRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => setIsPlaying(true))
+          .catch(() => setIsPlaying(false));
+      }
+    }
+  }, []);
 
   const topDrivers = (drivers || []).slice(0, 3);
 
@@ -63,14 +79,14 @@ export default function Home() {
           loop
           playsInline
           poster="/images/hero-car.jpg"
-          className="absolute inset-0 w-full h-full object-cover object-center opacity-40 transition-opacity duration-700"
+          className="absolute inset-0 w-full h-full object-cover object-center opacity-75 sm:opacity-85 transition-opacity duration-700"
         >
           <source src="/videos/hero-drive.mp4" type="video/mp4" />
-          <source src="/videos/city-drive.mp4" type="video/mp4" />
+          <source src="/videos/hero-drive-2.mp4" type="video/mp4" />
         </video>
 
         {/* Gradient Overlay for Optimum Readability */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/50 to-black/90 backdrop-blur-[0.5px]"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/60 pointer-events-none"></div>
 
         {/* Content Container */}
         <div className="relative z-10 max-w-4xl mx-auto text-center">
